@@ -46,6 +46,7 @@ def falconWholeFrameMovePrep():
 
     v.movementDirection = 0
     frameCollisionCheck()
+    stoneCollisionCheck()
     falconWholeFrameMoveBlit()
 
 
@@ -73,6 +74,14 @@ def frameCollisionCheck():
         v.falconPositionY = v.MAP_TILE_HEIGHT
     elif v.falconPositionY == -1:                      # UP BORDER
         v.falconPositionY = 0
+
+def stoneCollisionCheck():
+    for i in range(len(arrays.kamyki)):
+        for j in range(len(arrays.kamyki[i])): 
+            if arrays.kamyki[v.falconPositionX][v.falconPositionY] == 1:
+                v.falconPositionX = v.falconPreviousPositionX
+                v.falconPositionY = v.falconPreviousPositionY
+                
         
         
 
