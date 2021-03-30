@@ -32,6 +32,9 @@ falconR1.set_colorkey((0,0,0))
 #### FUNCTIONS
 
 def falconWholeFrameMovePrep():
+    v.falconPreviousPositionX = v.falconPositionX
+    v.falconPreviousPositionY = v.falconPositionY
+
     if v.movementDirection == 1:
         v.falconPositionX += 1
     elif v.movementDirection == 2:
@@ -51,14 +54,14 @@ def drawTiles():
         for j in range(len(arrays.kamyki[i])): 
             if arrays.kamyki[i][j] == 1:
                 stone1 = pygame.image.load(os.path.join("data", "stone1.png"))
-                screen.blit(stone1, (i * 64, j * 64))
+                screen.blit(stone1, (i * v.TILE_SIZE, j * v.TILE_SIZE))
     
 
     
 
 def falconWholeFrameMoveBlit():
-    screen.blit(bg, (0,0))
-    screen.blit(falconR1, (v.falconPositionX * 64,v.falconPositionY * 64))   
+    screen.blit(bg, (v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), pygame.Rect((v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(falconR1, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE))   
     pygame.display.flip()
 
 def frameCollisionCheck():
