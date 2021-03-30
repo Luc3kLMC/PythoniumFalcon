@@ -1,6 +1,6 @@
 
-MAP_TILE_HEIGHT = 7
-MAP_TILE_WIDTH = 10
+MAP_TILE_HEIGHT = 6
+MAP_TILE_WIDTH = 9
 FALCON_HEIGHT = 32
 ANIM_FRAME_COUNT = 16
 
@@ -12,4 +12,3 @@ falconPositionX = 0
 falconPositionY = 0
 
 movementDirection = 0
-
