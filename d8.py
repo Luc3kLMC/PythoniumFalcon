@@ -1,5 +1,5 @@
 import pygame, sys, os, random
-import arrays
+import arraysLevels as arrays
 import variables as v
 
 pygame.init()
@@ -7,6 +7,9 @@ FPS = 30
 fpsClock = pygame.time.Clock()  # needed for 'wait vbl'
 random.seed(567) # stone-tile randomizer seed
 stoneTileRandom = random.randint(1, 3)
+
+
+
 
 
 screen = pygame.display.set_mode((640,512))
@@ -23,7 +26,7 @@ excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) # ... amou
 capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) # ... capacitors for endgame score
 robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153)) # same for Robbo's
 
-kamyki = arrays.level1
+kamyki = arrays.dict_levels[v.level]
 
 
 idleFrame = 0  # variable controlling the idle animation time
@@ -72,10 +75,17 @@ def falconWholeFrameMovePrep():
     coalAndCollect()
     displayOnHUD()
     falconWholeFrameMoveBlit()
-    
+     
 
     
-
+    
+    
+def clearTiles():
+    global kamyki
+    for i in range(len(kamyki)):
+        for j in range(len(kamyki[i])):
+            kamyki[i][j] = 0
+            
 
 def drawTiles():
     for i in range(len(kamyki)):
@@ -83,7 +93,7 @@ def drawTiles():
             if kamyki[i][j] == 1:
                 v.falconPositionX = i
                 v.falconPositionY = j
-                screen.blit(falconR1, (v.falconPositionX,v.falconPositionY))
+                screen.blit(falconR1, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE))
             
             if kamyki[i][j] == 3:
                 stoneTileRandom = random.randint(1, 3)
@@ -139,8 +149,8 @@ def coalAndCollect():
         v.capacitors += 2
     elif whatPicked == 9:
         v.capacitors += 4
-    #elif whatPicked == 10:  # portal ending level
-        # TBD
+    elif whatPicked == 10:  # portal ending level
+        v.endLevelCheck = True
     elif whatPicked == 11:
         v.robboMsgCount += 1
 
@@ -169,7 +179,17 @@ def stoneCollisionCheck():
             if kamyki[v.falconPositionX][v.falconPositionY] == 3:
                 v.falconPositionX = v.falconPreviousPositionX
                 v.falconPositionY = v.falconPreviousPositionY
-                
+
+def nextLevel():
+    global kamyki
+    v.coal = 1
+    v.level += 1
+    clearTiles()
+    screen.blit(bg, (0,0))
+    displayOnHUD()
+    kamyki = arrays.dict_levels[v.level]
+    drawTiles()
+    pygame.display.flip()               
         
         
 
@@ -186,6 +206,10 @@ pygame.display.flip()
 
 ##### MAIN LOOP
 while run:
+
+    if v.endLevelCheck == True:
+        v.endLevelCheck = False
+        nextLevel()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

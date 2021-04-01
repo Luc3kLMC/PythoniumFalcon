@@ -8,6 +8,7 @@ ANIM_FRAME_COUNT = 16
 LAST_LEVEL_NUMBER = 28
 
 level = 1
+endLevelCheck = False
 
 startingCoal = 10
 coal = startingCoal
