@@ -9,7 +9,12 @@ LAST_LEVEL_NUMBER = 28
 
 level = 1
 
-coal = 10
+startingCoal = 10
+coal = startingCoal
+excessCoal = 0
+capacitors = 0
+
+robboMsgCount = 0
 
 keyPressed = False
 

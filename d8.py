@@ -12,12 +12,16 @@ stoneTileRandom = random.randint(1, 3)
 screen = pygame.display.set_mode((640,512))
 pygame.display.set_caption("AtareniumPython")
 run = True
-font = pygame.font.SysFont("Topaz-8", 16)
+font = pygame.font.Font("data\\Topaz-8.ttf", 16)
+#font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
 bg = pygame.image.load(os.path.join("data", "tlo1.png")).convert() # background image nr 1
-HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert()
+HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
 
-coalDisplay = font.render(str(v.coal), True, (0,153,153))
+coalDisplay = font.render(str(v.coal), True, (0,153,153))  # variable to display current coal amount on HUD
+excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) # ... amount of extra coal for endgame score
+capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) # ... capacitors for endgame score
+robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153)) # same for Robbo's
 
 kamyki = arrays.level1
 
@@ -65,7 +69,12 @@ def falconWholeFrameMovePrep():
     v.movementDirection = 0
     frameCollisionCheck()
     stoneCollisionCheck()
+    coalAndCollect()
+    displayOnHUD()
     falconWholeFrameMoveBlit()
+    
+
+    
 
 
 def drawTiles():
@@ -98,8 +107,44 @@ def drawTiles():
             if kamyki[i][j] == 11:               
                 screen.blit(robbo, (i * v.TILE_SIZE, j * v.TILE_SIZE))
             
-
+def displayOnHUD():
+    coalDisplay = font.render(str(v.coal), True, (0,153,153))  
+    excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) 
+    capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) 
+    robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153))
+    screen.blit(HUD, (0,448))
+    screen.blit(coalDisplay, (84,464))
+    screen.blit(excessCoalDisplay, (260,464))
+    screen.blit(capacitorsDisplay, (380,472))
+    screen.blit(robboDisplay, (500,472))
     
+def coalAndCollect():
+    v.coal -= 1
+
+    pickSthX = v.falconPositionX
+    pickSthY = v.falconPositionY
+
+    whatPicked = kamyki[pickSthX][pickSthY]
+    kamyki[pickSthX][pickSthY] = 0
+
+    if whatPicked == 4:
+        v.coal += 2
+    elif whatPicked == 5:
+        v.coal += 3
+    elif whatPicked == 6:
+        v.coal +=4
+    elif whatPicked == 7:
+        v.coal += 5
+    elif whatPicked == 8:
+        v.capacitors += 2
+    elif whatPicked == 9:
+        v.capacitors += 4
+    #elif whatPicked == 10:  # portal ending level
+        # TBD
+    elif whatPicked == 11:
+        v.robboMsgCount += 1
+
+
 
     
 
@@ -134,8 +179,7 @@ pygame.event.set_blocked(pygame.MOUSEMOTION)
 
 ##### screen display after preparing everything
 screen.blit(bg, (0,0))
-screen.blit(HUD, (0,448))
-screen.blit(coalDisplay, (84,464))   
+displayOnHUD()  
 
 drawTiles()
 pygame.display.flip()
