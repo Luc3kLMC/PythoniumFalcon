@@ -20,6 +20,7 @@ font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 
 bg = pygame.image.load(os.path.join("data", "tlo1.png")).convert() # background image nr 1
 HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
 
 coalDisplay = font.render(str(v.coal), True, (0,153,153))  # variable to display current coal amount on HUD
 excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) # ... amount of extra coal for endgame score
@@ -75,6 +76,7 @@ def falconWholeFrameMovePrep():
     coalAndCollect()
     displayOnHUD()
     falconWholeFrameMoveBlit()
+    gameOverCheck()
      
 
     
@@ -116,7 +118,8 @@ def drawTiles():
                 screen.blit(portal, (i * v.TILE_SIZE, j * v.TILE_SIZE))
             if kamyki[i][j] == 11:               
                 screen.blit(robbo, (i * v.TILE_SIZE, j * v.TILE_SIZE))
-            
+
+    
 def displayOnHUD():
     coalDisplay = font.render(str(v.coal), True, (0,153,153))  
     excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) 
@@ -126,7 +129,8 @@ def displayOnHUD():
     screen.blit(coalDisplay, (84,464))
     screen.blit(excessCoalDisplay, (260,464))
     screen.blit(capacitorsDisplay, (380,472))
-    screen.blit(robboDisplay, (500,472))
+    screen.blit(robboDisplay, (500,472)) 
+       
     
 def coalAndCollect():
     v.coal -= 1
@@ -161,7 +165,35 @@ def endLevelExcessCoalCount():
         v.excessCoal += 1
         displayOnHUD()
         pygame.display.flip()
-        
+
+
+def gameOverCheck():
+    if v.coal == 0:
+    
+        for i in range(3):
+            coalDisplay = font.render(str(v.coal), True, (204,0,0))  
+            screen.blit(HUD, (0,448))
+            screen.blit(coalDisplay, (84,464))
+            screen.blit(excessCoalDisplay, (260,464))
+            screen.blit(capacitorsDisplay, (380,472))
+            screen.blit(robboDisplay, (500,472)) 
+            pygame.display.flip() 
+            time.sleep(0.5)
+            coalDisplay = font.render(str(v.coal), True, (0,153,153))
+            screen.blit(HUD, (0,448))
+            screen.blit(coalDisplay, (84,464))
+            screen.blit(excessCoalDisplay, (260,464))
+            screen.blit(capacitorsDisplay, (380,472))
+            screen.blit(robboDisplay, (500,472)) 
+            pygame.display.flip() 
+            time.sleep(0.5)
+            
+
+        v.coal = v.startingCoal
+        screen.blit(gameOver, (0,0))
+        pygame.display.flip()
+        time.sleep(3)
+        execfile('menu.py')
 
 
 
@@ -211,7 +243,7 @@ pygame.event.set_blocked(pygame.MOUSEMOTION)
 
 ##### screen display after preparing everything
 screen.blit(bg, (0,0))
-displayOnHUD()  
+displayOnHUD()
 
 drawTiles()
 pygame.display.flip()
@@ -236,6 +268,8 @@ while run:
                 v.movementDirection = 3
             elif event.key == pygame.K_DOWN:
                 v.movementDirection = 4 
+            elif event.key == pygame.K_ESCAPE:
+                    execfile("menu.py") 
             falconWholeFrameMovePrep()
 
     

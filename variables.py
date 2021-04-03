@@ -10,7 +10,7 @@ LAST_LEVEL_NUMBER = 28
 level = 1
 endLevelCheck = False
 
-startingCoal = 20
+startingCoal = 10
 coal = startingCoal
 excessCoal = 0
 capacitors = 0

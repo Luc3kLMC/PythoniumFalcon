@@ -49,7 +49,7 @@ while run:
             if event.key == pygame.K_RETURN and pageControl == 1:
                 page2Display()
             elif event.key == pygame.K_RETURN and pageControl == 2:
-                execfile('d8.py')
+                execfile('menu.py')
             elif event.key == pygame.K_ESCAPE:
                 run = False
 
