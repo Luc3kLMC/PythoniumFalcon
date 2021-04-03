@@ -1,0 +1,16 @@
+message = [
+    "ATARENIUM (Pythonium) FALCON  v0.93 (Demo)",
+    "Ported from Amiga with intention to learn",
+    "some Python with Pygame.",
+    "Updated 03.04.2021, first release at",
+    "Decrunch 2020 gamedev compo (2nd place).",
+    "",
+    "Luc3k: code & MSX",
+    "Softiron: GFX",
+    "KaiN & Proxy: AFK",
+    "",
+    "Special credit goes to Saberman - ",
+    "The Great Atariman of the Galaxy.",
+    "",
+    "(Fire or Return to continue)",
+]

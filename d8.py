@@ -150,18 +150,18 @@ def coalAndCollect():
     elif whatPicked == 9:
         v.capacitors += 4
     elif whatPicked == 10:  # portal ending level
-        endLevelExcessCoalCount()
         v.endLevelCheck = True
     elif whatPicked == 11:
         v.robboMsgCount += 1
 
 def endLevelExcessCoalCount():
     for x in range(v.coal - 1):
+        time.sleep(0.5)
         v.coal -= 1
         v.excessCoal += 1
         displayOnHUD()
         pygame.display.flip()
-        time.sleep(0.5)
+        
 
 
 
@@ -192,6 +192,7 @@ def stoneCollisionCheck():
                 v.falconPositionY = v.falconPreviousPositionY
 
 def nextLevel():
+    endLevelExcessCoalCount()
     global kamyki
     v.coal = 1
     v.level += 1
