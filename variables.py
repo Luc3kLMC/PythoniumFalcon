@@ -16,6 +16,8 @@ excessCoal = 0
 capacitors = 0
 
 robboMsgCount = 0
+robboMsgCtrl = 0
+robboMsgNr = 1
 
 keyPressed = False
 

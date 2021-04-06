@@ -1,6 +1,7 @@
 import pygame, sys, os, random, time
 import arraysLevels as arrays
-import variables as v
+import variables as v  
+import robboTxt 
 
 pygame.init()
 FPS = 30
@@ -20,6 +21,7 @@ font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 
 bg = pygame.image.load(os.path.join("data", "tlo1.png")).convert() # background image nr 1
 HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+robboHUD = pygame.image.load(os.path.join("data", "falkon_robbo.png")).convert()
 gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
 
 coalDisplay = font.render(str(v.coal), True, (0,153,153))  # variable to display current coal amount on HUD
@@ -28,6 +30,7 @@ capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) # ... capa
 robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153)) # same for Robbo's
 
 kamyki = arrays.dict_levels[v.level]
+robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
 
 
 idleFrame = 0  # variable controlling the idle animation time
@@ -70,12 +73,18 @@ def falconWholeFrameMovePrep():
     elif v.movementDirection == 4:
         v.falconPositionY += 1
 
+    if v.robboMsgCtrl == 2:
+        robboScrollDown()
+        
+
     v.movementDirection = 0
+    v.coal -= 1
     frameCollisionCheck()
     stoneCollisionCheck()
-    coalAndCollect()
-    displayOnHUD()
     falconWholeFrameMoveBlit()
+    coalAndCollect()
+    
+    displayOnHUD()
     gameOverCheck()
      
 
@@ -121,6 +130,10 @@ def drawTiles():
 
     
 def displayOnHUD():
+    if v.robboMsgCtrl != 0:
+        return
+
+
     coalDisplay = font.render(str(v.coal), True, (0,153,153))  
     excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) 
     capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) 
@@ -130,10 +143,10 @@ def displayOnHUD():
     screen.blit(excessCoalDisplay, (260,464))
     screen.blit(capacitorsDisplay, (380,472))
     screen.blit(robboDisplay, (500,472)) 
-       
+    #pygame.display.flip()   
     
 def coalAndCollect():
-    v.coal -= 1
+    
 
     pickSthX = v.falconPositionX
     pickSthY = v.falconPositionY
@@ -157,6 +170,8 @@ def coalAndCollect():
         v.endLevelCheck = True
     elif whatPicked == 11:
         v.robboMsgCount += 1
+        v.robboMsgCtrl = 1
+        robboScrollUp()
 
 def endLevelExcessCoalCount():
     for x in range(v.coal - 1):
@@ -169,8 +184,8 @@ def endLevelExcessCoalCount():
 
 def gameOverCheck():
     if v.coal == 0:
-    
-        for i in range(3):
+                            # red '0' flicking to indicate game over - zero fuel
+        for i in range(3):    
             coalDisplay = font.render(str(v.coal), True, (204,0,0))  
             screen.blit(HUD, (0,448))
             screen.blit(coalDisplay, (84,464))
@@ -195,7 +210,35 @@ def gameOverCheck():
         time.sleep(3)
         execfile('menu.py')
 
+def robboScrollUp():
+    if v.robboMsgCtrl == 1: 
+        for i in range(64):       
+            screen.blit(robboHUD, (0,512 - i))
+            pygame.display.flip()
+            time.sleep(0.01)
 
+    global robboMessages
+    robboPreMsgDisplay = font.render("ROBBO says:", True, (0,153,153))
+    robboMsgDisplay = font.render(str(robboMessages), True, (0,153,153))
+    screen.blit(robboPreMsgDisplay, (16,460))
+    screen.blit(robboMsgDisplay, (16,480))
+    v.robboMsgNr +=1
+    robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
+    v.robboMsgCtrl = 2
+
+def robboScrollDown():
+     
+        for i in range(64): 
+            screen.blit(HUD, (0,448))      
+            screen.blit(robboHUD, (0,448 + i))
+            pygame.display.flip()
+            time.sleep(0.01)
+        
+        v.robboMsgCtrl = 0
+
+
+        
+    
 
 
 
@@ -204,7 +247,7 @@ def gameOverCheck():
 def falconWholeFrameMoveBlit():
     screen.blit(bg, (v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), pygame.Rect((v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
     screen.blit(falconR1, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE))   
-    pygame.display.flip()
+    #pygame.display.flip()
 
 def frameCollisionCheck():
     if v.falconPositionX == v.MAP_TILE_WIDTH + 1:    # RIGHT BORDER
@@ -250,6 +293,8 @@ pygame.display.flip()
 
 ##### MAIN LOOP
 while run:
+    pygame.display.flip()
+    
 
     if v.endLevelCheck == True:
         v.endLevelCheck = False
