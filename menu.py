@@ -1,4 +1,5 @@
 import pygame, sys, os, time
+import variables as v
 
 pygame.init()
 screen = pygame.display.set_mode((640,512))
@@ -17,11 +18,12 @@ while run:
     
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                execfile('d8.py')
+                v.gameStartProc = True
+                exec(open('d8.py').read())
             elif event.key == pygame.K_c:
-                execfile('credits.py')
+                exec(open('credits.py').read())
             elif event.key == pygame.K_i:
-                execfile('intro.py')
+                exec(open('intro.py').read())
             elif event.key == pygame.K_ESCAPE:
                 run = False
     

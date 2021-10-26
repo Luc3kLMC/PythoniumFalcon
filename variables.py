@@ -7,6 +7,8 @@ ANIM_FRAME_COUNT = 16
 
 LAST_LEVEL_NUMBER = 28
 
+gameStartProc = True
+
 level = 1
 endLevelCheck = False
 

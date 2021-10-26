@@ -99,6 +99,8 @@ def clearTiles():
             
 
 def drawTiles():
+    global kamyki
+    kamyki = arrays.dict_levels[v.level]
     for i in range(len(kamyki)):
         for j in range(len(kamyki[i])): 
             if kamyki[i][j] == 1:
@@ -205,10 +207,12 @@ def gameOverCheck():
             
 
         v.coal = v.startingCoal
+        v.level = 1
+        v.robboMsgCount = 0
         screen.blit(gameOver, (0,0))
         pygame.display.flip()
-        time.sleep(3)
-        execfile('menu.py')
+        time.sleep(2)
+        exec(open('menu.py').read())
 
 def robboScrollUp():
     if v.robboMsgCtrl == 1: 
@@ -294,6 +298,15 @@ pygame.display.flip()
 ##### MAIN LOOP
 while run:
     pygame.display.flip()
+
+    if v.gameStartProc == True:
+        screen.blit(bg, (0,0))
+        displayOnHUD()
+        kamyki = arrays.dict_levels[1]
+        drawTiles()
+        v.gameStartProc = False
+
+    
     
 
     if v.endLevelCheck == True:
@@ -314,7 +327,7 @@ while run:
             elif event.key == pygame.K_DOWN:
                 v.movementDirection = 4 
             elif event.key == pygame.K_ESCAPE:
-                    execfile("menu.py") 
+                    exec(open("menu.py").read()) 
             falconWholeFrameMovePrep()
 
     

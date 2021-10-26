@@ -84,7 +84,7 @@ while run:
     
     if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                execfile('menu.py')
+                exec(open('menu.py').read())
             elif event.key == pygame.K_ESCAPE:
                 run = False
 

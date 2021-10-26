@@ -1,2 +1,2 @@
 import pygame
-execfile('credits.py')
+exec(open('credits.py').read())
