@@ -14,12 +14,15 @@ stoneTileRandom = random.randint(1, 3)
 
 
 screen = pygame.display.set_mode((640,512))
-pygame.display.set_caption("AtareniumPython")
+pygame.display.set_caption("PythoniumFalcon")
 run = True
 font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 #font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
-bg = pygame.image.load(os.path.join("data", "tlo1.png")).convert() # background image nr 1
+tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
+tileset.set_colorkey((0,0,0))
+
+bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
 HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
 robboHUD = pygame.image.load(os.path.join("data", "falkon_robbo.png")).convert()
 gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
@@ -35,27 +38,27 @@ robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
 
 idleFrame = 0  # variable controlling the idle animation time
 
-    # atarenium falcon idle graphics
+    # atarenium falcon idle graphics  UNUSED - BADLY HANDLED, FULL TILESET IMPLEMENTED !
     # pointing right
-falconR1 = pygame.image.load(os.path.join("data", "falconR1.png"))
-falconR1.set_colorkey((0,0,0))
+#falconR1 = pygame.image.load(os.path.join("data\\tilesFalcon", "falconR1.png"))
+#falconR1.set_colorkey((0,0,0))
     # other gfx
-coal2 = pygame.image.load(os.path.join("data", "Coal2.png"))
-coal2.set_colorkey((0,0,0))
-coal3 = pygame.image.load(os.path.join("data", "Coal3.png"))
-coal3.set_colorkey((0,0,0))
-coal4 = pygame.image.load(os.path.join("data", "Coal4.png"))
-coal4.set_colorkey((0,0,0))
-coal5 = pygame.image.load(os.path.join("data", "Coal5.png"))
-coal5.set_colorkey((0,0,0))
-blueCapacitor = pygame.image.load(os.path.join("data", "BlueCapacitor0.png"))
-blueCapacitor.set_colorkey((0,0,0))
-redCapacitor = pygame.image.load(os.path.join("data", "RedCapacitor0.png"))
-redCapacitor.set_colorkey((0,0,0))
-portal = pygame.image.load(os.path.join("data", "AtariPortal.png"))
-portal.set_colorkey((0,0,0))
-robbo = pygame.image.load(os.path.join("data", "Robbo.png"))
-robbo.set_colorkey((0,0,0))
+#coal2 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal2.png"))
+#coal2.set_colorkey((0,0,0))
+#coal3 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal3.png"))
+#coal3.set_colorkey((0,0,0))
+#coal4 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal4.png"))
+#coal4.set_colorkey((0,0,0))
+#coal5 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal5.png"))
+#coal5.set_colorkey((0,0,0))
+#blueCapacitor = pygame.image.load(os.path.join("data", "BlueCapacitor0.png"))
+#blueCapacitor.set_colorkey((0,0,0))
+#redCapacitor = pygame.image.load(os.path.join("data", "RedCapacitor0.png"))
+#redCapacitor.set_colorkey((0,0,0))
+#portal = pygame.image.load(os.path.join("data", "AtariPortal.png"))
+#portal.set_colorkey((0,0,0))
+#robbo = pygame.image.load(os.path.join("data", "Robbo.png"))
+#robbo.set_colorkey((0,0,0))
 
 
 #### FUNCTIONS
@@ -106,29 +109,27 @@ def drawTiles():
             if kamyki[i][j] == 1:
                 v.falconPositionX = i
                 v.falconPositionY = j
-                screen.blit(falconR1, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE))
+                screen.blit(tileset, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE),(0,128,64,64))
             
             if kamyki[i][j] == 3:
-                stoneTileRandom = random.randint(1, 3)
-                stone1 = pygame.image.load(os.path.join("data", "stone"+ str(stoneTileRandom) +".png"))
-                stone1.set_colorkey((0,0,0))
-                screen.blit(stone1, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                stoneTileRandom = random.randint(0, 2)
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(stoneTileRandom * 64,0,64,64))
             if kamyki[i][j] == 4:
-                screen.blit(coal2, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(3 * 64,0,64,64))
             if kamyki[i][j] == 5:
-                screen.blit(coal3, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(4*64,0,64,64))
             if kamyki[i][j] == 6:                
-                screen.blit(coal4, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(5*64,0,64,64))
             if kamyki[i][j] == 7:               
-                screen.blit(coal5, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(6*64,0,64,64))
             if kamyki[i][j] == 8:               
-                screen.blit(blueCapacitor, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(0,64,64,64))
             if kamyki[i][j] == 9:                
-                screen.blit(redCapacitor, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(64,64,64,64))
             if kamyki[i][j] == 10:               
-                screen.blit(portal, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(128,64,64,64))
             if kamyki[i][j] == 11:               
-                screen.blit(robbo, (i * v.TILE_SIZE, j * v.TILE_SIZE))
+                screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(192,64,64,64))
 
     
 def displayOnHUD():
@@ -250,7 +251,7 @@ def robboScrollDown():
 
 def falconWholeFrameMoveBlit():
     screen.blit(bg, (v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), pygame.Rect((v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
-    screen.blit(falconR1, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE))   
+    screen.blit(tileset, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE),(0,128,64,64))   
     #pygame.display.flip()
 
 def frameCollisionCheck():
@@ -327,7 +328,7 @@ while run:
             elif event.key == pygame.K_DOWN:
                 v.movementDirection = 4 
             elif event.key == pygame.K_ESCAPE:
-                    exec(open("menu.py").read()) 
+                exec(open("menu.py").read()) 
             falconWholeFrameMovePrep()
 
     
