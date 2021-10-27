@@ -7,7 +7,7 @@ run = True
 FPS = 100
 fpsClock = pygame.time.Clock()
 
-# kinda enum style
+# kinda enum style 
 STATE_LMC_FADE_IN = 1
 STATE_LMC_FADE_OUT = 2
 STATE_ACE_FADE_IN = 3
@@ -15,7 +15,7 @@ STATE_ACE_FADE_OUT = 4
 STATE_CREDITS_TEXT= 5
 
 fadeTick = 0
-stateActual = 1
+stateActual = STATE_LMC_FADE_IN  # controling the phase we're already in
 creditsDisplayed = 0
 
 LMC = pygame.image.load(os.path.join("data", "LMC.png")).convert()
@@ -61,8 +61,7 @@ def fadeOutLMC():
         pygame.display.update()
         stateActual = STATE_ACE_FADE_IN
         fadeTick = 0
-
-    
+ 
 def fadeInACE():
     global fadeTick, stateActual
     fadein = pygame.Surface((640, 512))
@@ -83,7 +82,6 @@ def fadeInACE():
         stateActual = STATE_ACE_FADE_OUT
         fadeTick = 0
         
-
 def fadeOutACE():
     global fadeTick,stateActual
     fadeout = pygame.Surface((640, 512))
@@ -114,7 +112,8 @@ def creditsDisplay():
         time.sleep(0.01)
 
 while run:
-    
+    # written this way because i want to be able to skip all the fades 
+    # with pressing Enter at any moment
 
     if (stateActual == STATE_LMC_FADE_IN):
         fadeInLMC()
