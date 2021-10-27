@@ -113,9 +113,11 @@ def drawTiles():
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(5*64,0,64,64))
             if kamyki[i][j] == 7:               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(6*64,0,64,64))
-            if kamyki[i][j] == 8:               
+            if kamyki[i][j] == 8:
+                v.collectiblesAnim[i][j] = 8               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(0,64,64,64))
-            if kamyki[i][j] == 9:                
+            if kamyki[i][j] == 9: 
+                v.collectiblesAnim[i][j] = 9               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(64,64,64,64))
             if kamyki[i][j] == 10:
                 v.portalGlowX = i
@@ -269,6 +271,32 @@ def portalGlowAnim():
     screen.blit(bg, (v.portalGlowX*64,v.portalGlowY*64),(0,0,64,64)) 
     screen.blit(tileset, (v.portalGlowX*64,v.portalGlowY*64),(v.portalGlowFrame*64,11*64,64,64))     
 
+def redCapacitorsAnim():
+    i = 0
+    k = 0
+    if (v.redCapacitorAnimTick == v.CAPACITOR_TICK_TEMPO):
+        for i in range (10):
+            for k in range (7):
+                if (v.collectiblesAnim[i][k] == 9):
+                    screen.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    screen.blit(tileset, (i * 64,k * 64),(v.redCapacitorAnimTileCheck*64,9*64,64,64))
+    v.redCapacitorAnimTileCheck += 1
+    if (v.redCapacitorAnimTileCheck == 7):
+        v.redCapacitorAnimTileCheck = 0
+
+def blueCapacitorsAnim():
+    i = 0
+    k = 0
+    if (v.blueCapacitorAnimTick == v.CAPACITOR_TICK_TEMPO):
+        for i in range (10):
+            for k in range (7):
+                if (v.collectiblesAnim[i][k] == 8):
+                    screen.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    screen.blit(tileset, (i * 64,k * 64),(v.blueCapacitorAnimTileCheck*64,8*64,64,64))
+    v.blueCapacitorAnimTileCheck += 1
+    if (v.blueCapacitorAnimTileCheck == 7):
+        v.blueCapacitorAnimTileCheck = 0
+
 
 ##### disable mouse 
 pygame.event.set_blocked(pygame.MOUSEMOTION)
@@ -292,6 +320,17 @@ while run:
         v.portalGlowTick = 0
         if (v.portalGlowFrame == 7):
             v.portalGlowFrame = 0
+    
+    v.redCapacitorAnimTick += 1
+    if (v.redCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
+        v.redCapacitorAnimTick = 0
+    
+    v.blueCapacitorAnimTick += 1
+    if (v.blueCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
+        v.blueCapacitorAnimTick = 0
+
+    redCapacitorsAnim()
+    blueCapacitorsAnim()
 
 
     if v.gameStartProc == True:

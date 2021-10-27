@@ -19,6 +19,11 @@ robboMsgCount = 0
 robboMsgCtrl = 0
 robboMsgNr = 1
 
+# array initialization for capacitors animation
+w, h = 7, 10
+collectiblesAnim = [[0 for x in range(w)] for y in range(h)]
+
+
 
 # ship movement
 falconPositionX = 0
@@ -35,6 +40,15 @@ PORTAL_TICK_TEMPO = 4
 portalGlowTick = 0
 portalGlowFrame = 0
 
+# R U capacitors animation
+redCapacitorAnimTick = 0
+blueCapacitorAnimTick = 0
+CAPACITOR_TICK_TEMPO = 8
+redCapacitorAnimTileCheck = 0
+blueCapacitorAnimTileCheck = 0
 
-
+# amiga mode 
+AMIGA_MODE_OFF = 0
+AMIGA_MODE_ON = 1
+AMIGA_MODE_CHECK = 2
 amigaMode = 0
