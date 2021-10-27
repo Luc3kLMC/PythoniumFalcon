@@ -23,6 +23,14 @@ robboMsgNr = 1
 w, h = 7, 10
 collectiblesAnim = [[0 for x in range(w)] for y in range(h)]
 
+# hitting stone 
+stoneHit = 0
+
+# ship idle
+falconIdle = 0
+falconIdleTempo = 4
+falconIdleControl = True
+idleFrame = 0
 
 
 # ship movement
@@ -31,7 +39,8 @@ falconPositionY = 0
 
 falconPreviousPositionX = 0
 falconPreviousPositionY = 0
-movementDirection = 0
+kierunek = 0
+falconFace = 0
 
 # portal animation 
 portalGlowX = 0

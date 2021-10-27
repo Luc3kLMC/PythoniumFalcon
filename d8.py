@@ -63,23 +63,23 @@ def falconWholeFrameMovePrep():
     v.falconPreviousPositionX = v.falconPositionX
     v.falconPreviousPositionY = v.falconPositionY
 
-    if v.movementDirection == 1:
+    if v.kierunek == 1:
         v.falconPositionX += 1
-    elif v.movementDirection == 2:
+    elif v.kierunek == 2:
         v.falconPositionX -= 1
-    elif v.movementDirection == 3:
+    elif v.kierunek == 3:
         v.falconPositionY -= 1
-    elif v.movementDirection == 4:
+    elif v.kierunek == 4:
         v.falconPositionY += 1
 
     if v.robboMsgCtrl == 2:
         robboScrollDown()
         
 
-    v.movementDirection = 0
+    v.kierunek = 0
     v.coal -= 1
     frameCollisionCheck()
-    stoneCollisionCheck()
+    isThisStone()
     falconWholeFrameMoveBlit()
     coalAndCollect()
     
@@ -248,7 +248,7 @@ def frameCollisionCheck():
     elif v.falconPositionY == -1:                      # UP BORDER
         v.falconPositionY = 0
 
-def stoneCollisionCheck():
+def isThisStone():
     for i in range(len(kamyki)):
         for j in range(len(kamyki[i])): 
             if kamyki[v.falconPositionX][v.falconPositionY] == 3:
@@ -297,6 +297,36 @@ def blueCapacitorsAnim():
     if (v.blueCapacitorAnimTileCheck == 7):
         v.blueCapacitorAnimTileCheck = 0
 
+def falconIdleAnimation():
+    if (v.falconIdleControl == False):
+        return
+    elif (v.kierunek != 0 and v.stoneHit == 0):
+        return
+    
+    if (v.falconIdle == v.falconIdleTempo * 1):
+        v.idleFrame = 0
+    elif (v.falconIdle == v.falconIdleTempo * 2):
+        v.idleFrame = 1
+    elif (v.falconIdle == v.falconIdleTempo * 3):
+        v.idleFrame = 2
+    elif (v.falconIdle == v.falconIdleTempo * 4):
+        v.idleFrame = 3
+    elif (v.falconIdle == v.falconIdleTempo * 5):
+        v.idleFrame = 4
+    elif (v.falconIdle == v.falconIdleTempo * 6):
+        v.idleFrame = 5
+    elif (v.falconIdle == v.falconIdleTempo * 7):
+        v.idleFrame = 6
+    elif (v.falconIdle == v.falconIdleTempo * 8):
+        v.idleFrame = 7
+        v.falconIdle = 0
+
+    screen.blit(bg, (v.falconPositionX*64,v.falconPositionY*64),(0,0,64,64)) 
+    screen.blit(tileset, (v.falconPositionX*64,v.falconPositionY*64),(v.idleFrame*64,v.falconFace+(6*64),64,64))
+
+    
+
+
 
 ##### disable mouse 
 pygame.event.set_blocked(pygame.MOUSEMOTION)
@@ -332,6 +362,8 @@ while run:
     redCapacitorsAnim()
     blueCapacitorsAnim()
 
+    falconIdleAnimation()
+
 
     if v.gameStartProc == True:
         screen.blit(bg, (0,0))
@@ -353,17 +385,19 @@ while run:
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
-                v.movementDirection = 1
+                v.kierunek = 1
             elif event.key == pygame.K_LEFT:
-                v.movementDirection = 2
+                v.kierunek = 2
             elif event.key == pygame.K_UP:
-                v.movementDirection = 3
+                v.kierunek = 3
             elif event.key == pygame.K_DOWN:
-                v.movementDirection = 4 
+                v.kierunek = 4 
             elif event.key == pygame.K_ESCAPE:
                 exec(open("menu.py").read()) 
             falconWholeFrameMovePrep()
 
+    if (v.falconIdleControl == True):
+        v.falconIdle += 1
     
     fpsClock.tick(FPS)    # wait vbl
 
