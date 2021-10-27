@@ -9,10 +9,6 @@ fpsClock = pygame.time.Clock()  # needed for 'wait vbl'
 random.seed(567) # stone-tile randomizer seed
 stoneTileRandom = random.randint(1, 3)
 
-
-
-
-
 screen = pygame.display.set_mode((640,512))
 pygame.display.set_caption("PythoniumFalcon")
 run = True
@@ -88,11 +84,7 @@ def falconWholeFrameMovePrep():
     coalAndCollect()
     
     displayOnHUD()
-    gameOverCheck()
-     
-
-    
-    
+    gameOverCheck()   
     
 def clearTiles():
     global kamyki
@@ -100,7 +92,6 @@ def clearTiles():
         for j in range(len(kamyki[i])):
             kamyki[i][j] = 0
             
-
 def drawTiles():
     global kamyki
     kamyki = arrays.dict_levels[v.level]
@@ -126,11 +117,12 @@ def drawTiles():
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(0,64,64,64))
             if kamyki[i][j] == 9:                
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(64,64,64,64))
-            if kamyki[i][j] == 10:               
+            if kamyki[i][j] == 10:
+                v.portalGlowX = i
+                v.portalGlowY = j               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(128,64,64,64))
             if kamyki[i][j] == 11:               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(192,64,64,64))
-
     
 def displayOnHUD():
     if v.robboMsgCtrl != 0:
@@ -183,7 +175,6 @@ def endLevelExcessCoalCount():
         v.excessCoal += 1
         displayOnHUD()
         pygame.display.flip()
-
 
 def gameOverCheck():
     if v.coal == 0:
@@ -239,15 +230,7 @@ def robboScrollDown():
             time.sleep(0.01)
         
         v.robboMsgCtrl = 0
-
-
-        
     
-
-
-
-    
-
 def falconWholeFrameMoveBlit():
     screen.blit(bg, (v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), pygame.Rect((v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
     screen.blit(tileset, (v.falconPositionX * v.TILE_SIZE,v.falconPositionY * v.TILE_SIZE),(0,128,64,64))   
@@ -282,7 +265,9 @@ def nextLevel():
     drawTiles()
     pygame.display.flip()               
         
-        
+def portalGlowAnim():
+    screen.blit(bg, (v.portalGlowX*64,v.portalGlowY*64),(0,0,64,64)) 
+    screen.blit(tileset, (v.portalGlowX*64,v.portalGlowY*64),(v.portalGlowFrame*64,11*64,64,64))     
 
 
 ##### disable mouse 
@@ -298,6 +283,16 @@ pygame.display.flip()
 ##### MAIN LOOP
 while run:
     pygame.display.flip()
+
+    # handling with idle animations:
+    v.portalGlowTick += 1
+    if (v.portalGlowTick > v.PORTAL_TICK_TEMPO):
+        v.portalGlowFrame += 1
+        portalGlowAnim()
+        v.portalGlowTick = 0
+        if (v.portalGlowFrame == 7):
+            v.portalGlowFrame = 0
+
 
     if v.gameStartProc == True:
         screen.blit(bg, (0,0))
