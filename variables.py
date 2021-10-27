@@ -30,3 +30,5 @@ falconPreviousPositionX = 0
 falconPreviousPositionY = 0
 
 movementDirection = 0
+
+amigaMode = 0

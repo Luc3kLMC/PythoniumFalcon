@@ -210,10 +210,9 @@ def gameOverCheck():
         v.coal = v.startingCoal
         v.level = 1
         v.robboMsgCount = 0
-        screen.blit(gameOver, (0,0))
-        pygame.display.flip()
-        time.sleep(2)
-        exec(open('menu.py').read())
+        v.falconPositionX = 0
+        v.falconPreviousPositionY = 0
+        exec(open("gameover.py").read())
 
 def robboScrollUp():
     if v.robboMsgCtrl == 1: 

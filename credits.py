@@ -4,6 +4,19 @@ import creditsTxt as txt
 pygame.init()
 screen = pygame.display.set_mode((640,512))
 run = True
+FPS = 100
+fpsClock = pygame.time.Clock()
+
+# kinda enum style
+STATE_LMC_FADE_IN = 1
+STATE_LMC_FADE_OUT = 2
+STATE_ACE_FADE_IN = 3
+STATE_ACE_FADE_OUT = 4
+STATE_CREDITS_TEXT= 5
+
+fadeTick = 0
+stateActual = 1
+creditsDisplayed = 0
 
 LMC = pygame.image.load(os.path.join("data", "LMC.png")).convert()
 ACE = pygame.image.load(os.path.join("data", "ACE.png")).convert()
@@ -12,50 +25,83 @@ font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 position = 0
 
 def fadeInLMC():
+    global fadeTick,stateActual
     fadein = pygame.Surface((640, 512))
     fadein = fadein.convert()
-    fadein.fill((0,0,0))
-    
-    for i in range(255):
-        fadein.set_alpha(255 - i)
+    if (fadeTick < 1):
+        fadein.fill((0,0,0))
+    elif (fadeTick > 0 and fadeTick < 255): 
+        fadein.set_alpha(255 - fadeTick)
         screen.blit(LMC, (0,0))
         screen.blit(fadein, (0, 0))
         pygame.display.update()
-        time.sleep(0.01)
+    elif (fadeTick >= 256):
+        fadein.set_alpha(fadeTick)
+        screen.blit(LMC, (0,0))
+        screen.blit(fadein, (0, 0))
+        pygame.display.update()
+        stateActual = STATE_LMC_FADE_OUT
+        fadeTick = 0
 
 def fadeOutLMC():
+    global fadeTick,stateActual
     fadeout = pygame.Surface((640, 512))
     fadeout = fadeout.convert()
-    fadeout.fill((0,0,0))
-    for i in range(255):
-        fadeout.set_alpha(i)
+    if (fadeTick < 1):
+        fadeout.fill((0,0,0))
+    elif (fadeTick > 0 and fadeTick < 255): 
+        fadeout.set_alpha(fadeTick)
         screen.blit(LMC, (0,0))
         screen.blit(fadeout, (0, 0))
         pygame.display.update()
-        time.sleep(0.01)
+    elif (fadeTick >= 256):
+        fadeout.set_alpha(fadeTick)
+        screen.blit(LMC, (0,0))
+        screen.blit(fadeout, (0, 0))
+        pygame.display.update()
+        stateActual = STATE_ACE_FADE_IN
+        fadeTick = 0
+
     
 def fadeInACE():
+    global fadeTick, stateActual
     fadein = pygame.Surface((640, 512))
     fadein = fadein.convert()
-    fadein.fill((0,0,0))
+    if (fadeTick < 1):
+        fadein.fill((0,0,0))
     
-    for i in range(255):
-        fadein.set_alpha(255 - i)
+    elif (fadeTick > 0 and fadeTick < 255): 
+        fadein.set_alpha(255 - fadeTick)
         screen.blit(ACE, (0,0))
         screen.blit(fadein, (0, 0))
         pygame.display.update()
-        time.sleep(0.01)
+    elif (fadeTick >= 256):
+        fadein.set_alpha(fadeTick)
+        screen.blit(ACE,(0,0))
+        screen.blit(fadein, (0,0))
+        pygame.display.update()
+        stateActual = STATE_ACE_FADE_OUT
+        fadeTick = 0
+        
 
 def fadeOutACE():
+    global fadeTick,stateActual
     fadeout = pygame.Surface((640, 512))
     fadeout = fadeout.convert()
-    fadeout.fill((0,0,0))
-    for i in range(255):
-        fadeout.set_alpha(i)
+    if (fadeTick < 1):
+        fadeout.fill((0,0,0))
+    elif (fadeTick > 0 and fadeTick < 255):
+        fadeout.set_alpha(fadeTick)
         screen.blit(ACE, (0,0))
         screen.blit(fadeout, (0, 0))
         pygame.display.update()
-        time.sleep(0.01)
+    elif (fadeTick >= 256):
+        fadeout.set_alpha(fadeTick)
+        screen.blit(ACE, (0,0))
+        screen.blit(fadeout, (0, 0))
+        pygame.display.update()
+        stateActual = STATE_CREDITS_TEXT
+        fadeTick = 0
 
 def creditsDisplay():
     global position
@@ -65,19 +111,27 @@ def creditsDisplay():
         screen.blit(blitTxt, (0,position))
         pygame.display.flip()
         position += 16
-        time.sleep(0.1)
-    
-
-
-
-fadeInLMC()
-fadeOutLMC()
-fadeInACE()
-fadeOutACE()
-creditsDisplay()
+        time.sleep(0.01)
 
 while run:
     
+
+    if (stateActual == STATE_LMC_FADE_IN):
+        fadeInLMC()
+    elif (stateActual == STATE_LMC_FADE_OUT):
+        fadeOutLMC()
+    elif (stateActual == STATE_ACE_FADE_IN):
+        fadeInACE()
+    elif (stateActual == STATE_ACE_FADE_OUT):
+        fadeOutACE()
+    elif (stateActual == STATE_CREDITS_TEXT and creditsDisplayed == 0):
+        creditsDisplayed = 1
+        creditsDisplay()   
+
+    if (stateActual != STATE_CREDITS_TEXT):
+        fadeTick = fadeTick + 1
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -87,5 +141,7 @@ while run:
                 exec(open('menu.py').read())
             elif event.key == pygame.K_ESCAPE:
                 run = False
+    
+    fpsClock.tick(FPS)
 
 
