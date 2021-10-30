@@ -38,7 +38,7 @@ dict_robboTxt = {
     16: robboTxt16,
     17: robboTxt17,
     18: robboTxt18,
-    19: robboTxtPreLast,
-    20: robboTxtLast
+    27: robboTxtPreLast,
+    28: robboTxtLast
 }
 
