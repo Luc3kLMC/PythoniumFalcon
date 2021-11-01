@@ -319,8 +319,8 @@ def falconHittingStone():
             v.stoneHitAnimControl = 0
             v.falconIdleControl = 1
 
-    screen.blit(bg, (posX * v.TILE_SIZE, posY * v.TILE_SIZE), pygame.Rect((posX * v.TILE_SIZE, posY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
-    screen.blit(tileset, (v.falconX * v.TILE_SIZE,v.falconY * v.TILE_SIZE),(v.stoneHitAnimFrame * 64,v.falconFace + 128,64,64))   
+    screen.blit(bg, (posX, posY), pygame.Rect((posX, posY), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(tileset, (posX,posY),(v.stoneHitAnimFrame * 64,v.falconFace + 128,64,64))   
 
 def levelScore():
     if (v.levelScoreControl == v.LEVEL_SCORE_OFF):
@@ -483,21 +483,23 @@ def falconCollisionCheck():
         v.stoneHitAnimControl = 1
         v.falconIdleControl = 0
     
-    if v.kierunekHold == 1:
-        v.krawedzX -= 1
-    if v.kierunekHold == 2:
-        v.krawedzX += 1
-    if v.kierunekHold == 3:
-        v.krawedzY += 1
-    if v.kierunekHold == 4:
-        v.krawedzY -= 1
+        if v.kierunekHold == 1:
+            v.krawedzX -= 1
+        if v.kierunekHold == 2:
+            v.krawedzX += 1
+        if v.kierunekHold == 3:
+            v.krawedzY += 1
+        if v.kierunekHold == 4:
+            v.krawedzY -= 1
 
-    v.stoneHit = 0
+        v.stoneHit = 0
+        return
     
     if v.frameHit == 1:
         v.stoneHitAnimControl = 1
         v.falconIdleControl = 0
         v.frameHit = 0
+        return
 
     prepareFalconFlying()
     v.flyingAnimControl = 1 
@@ -546,19 +548,19 @@ def isThisStone():
     stoneX = 0
     stoneY = 0
 
-    if v.kierunek == 1:
+    if v.kierunekHold == 1:
         stoneX = v.falconX + 1
         if kamyki[stoneX][v.falconY] == 3:
             v.stoneHit = 1
-    if v.kierunek == 2:
+    if v.kierunekHold == 2:
         stoneX = v.falconX - 1
         if kamyki[stoneX][v.falconY] == 3:
             v.stoneHit = 1
-    if v.kierunek == 3:
+    if v.kierunekHold == 3:
         stoneX = v.falconY - 1
         if kamyki[v.falconX][stoneY] == 3:
             v.stoneHit = 1
-    if v.kierunek == 4:
+    if v.kierunekHold == 4:
         stoneX = v.falconY + 1
         if kamyki[v.falconX][stoneY] == 3:
             v.stoneHit = 1
@@ -635,7 +637,7 @@ def blueCapacitorsAnim():
 def falconIdleAnimation():
     if (v.falconIdleControl == 0):
         return
-    elif (v.kierunek != 0 and v.stoneHit == 1):
+    elif (v.kierunek != 0 and v.stoneHit == 0):
         return
     
     if (v.falconIdle == v.falconIdleTempo * 1):
