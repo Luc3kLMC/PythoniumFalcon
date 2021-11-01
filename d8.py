@@ -6,7 +6,7 @@ import variables as v
 import robboTxt 
 
 pygame.init()
-FPS = 30
+FPS = 50
 fpsClock = pygame.time.Clock()  # needed for 'wait vbl'
 random.seed(567) # stone-tile randomizer seed
 stoneTileRandom = random.randint(1, 3)
@@ -265,6 +265,7 @@ def falconHittingStone():
     
     posX = v.falconX * 64
     posY = v.falconY * 64
+    #v.oneFrameDirection = v.kierunekHold
 
     if v.stoneHitAnimControl == 1:
         if v.stoneHitAnimTick == v.falconIdleTempo * 1:
@@ -319,7 +320,7 @@ def falconHittingStone():
             v.stoneHitAnimControl = 0
             v.falconIdleControl = 1
 
-    screen.blit(bg, (posX, posY), pygame.Rect((posX, posY), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(bg, (posX, posY),((posX, posY), (v.TILE_SIZE,v.TILE_SIZE)))
     screen.blit(tileset, (posX,posY),(v.stoneHitAnimFrame * 64,v.falconFace + 128,64,64))   
 
 def levelScore():
@@ -557,11 +558,11 @@ def isThisStone():
         if kamyki[stoneX][v.falconY] == 3:
             v.stoneHit = 1
     if v.kierunekHold == 3:
-        stoneX = v.falconY - 1
+        stoneY = v.falconY - 1
         if kamyki[v.falconX][stoneY] == 3:
             v.stoneHit = 1
     if v.kierunekHold == 4:
-        stoneX = v.falconY + 1
+        stoneY = v.falconY + 1
         if kamyki[v.falconX][stoneY] == 3:
             v.stoneHit = 1
 
