@@ -1,4 +1,6 @@
 import pygame, sys, os, random, time
+
+from pygame.event import clear
 import arraysLevels as arrays
 import variables as v  
 import robboTxt 
@@ -67,19 +69,65 @@ def endLevelFadeOut():
     #TBD  
     return  
 
+def prepareFalconFlying():
+    v.previousX = v.uwPosX
+    v.previousY = v.uwPosY
+    v.newPosX = v.uwPosX
+    v.newPosY = v.uwPosY
+
+    if v.kierunekHold == 1:
+        v.tempX = v.falconX + 1
+        v.uwPosX = v.tempX * 64
+    if v.kierunekHold == 2:
+        v.tempX = v.falconX - 1
+        v.uwPosX = v.tempX * 64
+    if v.kierunekHold == 3:
+        v.tempY = v.falconY - 1
+        v.uwPosY = v.tempY * 64
+    if v.kierunekHold == 4:
+        v.tempY = v.falconY + 1
+        v.uwPosY = v.tempY * 64
+
+def endFalconFlying():
+    #screen.blit(bg, (v.newPosX * v.TILE_SIZE, v.newPosY * v.TILE_SIZE), pygame.Rect((v.newPosX * v.TILE_SIZE, v.newPosY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+    if v.kierunekHold == 1:
+        v.falconX = v.falconX + 1
+    if v.kierunekHold == 2:
+        v.falconX = v.falconX - 1
+    if v.kierunekHold == 3:
+        v.falconY = v.falconY - 1
+    if v.kierunekHold == 4:
+        v.falconY = v.falconY + 1
+
+def blitFlyingFrame():
+    screen.blit(bg, (v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), pygame.Rect((v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+    prevPosX = v.uwPosX
+    prevPosY = v.uwPosY
+    if v.kierunekHold == 1:
+        prevPosX -= 2
+    if v.kierunekHold == 2:
+        prevPosX += 2
+    if v.kierunekHold == 3:
+        prevPosY += 2
+    if v.kierunekHold == 4:
+        prevPosY -= 2
+    
+    screen.blit(bg, (prevPosX, prevPosY), ((prevPosX, prevPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(bg, (v.newPosX, v.newPosY),((v.newPosX, v.newPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(tileset, (v.newPosX, v.newPosY),(v.flyingFrame*64,v.falconFace+(2*64),64,64))
 
 def falconWholeFrameMovePrep():
-    v.falconPreviousPositionX = v.falconX
-    v.falconPreviousPositionY = v.falconY
+    v.previousX = v.falconX
+    v.previousY = v.falconY
 
     if v.kierunek == 1:
-        v.falconX += 1
+        v.falconX = v.falconX + 1
     elif v.kierunek == 2:
-        v.falconX -= 1
+        v.falconX = v.falconX - 1
     elif v.kierunek == 3:
-        v.falconY -= 1
+        v.falconY = v.falconY - 1
     elif v.kierunek == 4:
-        v.falconY += 1
+        v.falconY = v.falconY + 1
 
     
         
@@ -208,6 +256,8 @@ def coalAndCollect():
             if v.amigaMode == v.AMIGA_MODE_ON: 
                 v.amigaMode = v.AMIGA_MODE_CHECK # and now set to check ending
                 # AMIGA MODE TBD
+    displayOnHUD()
+    
 
 def falconHittingStone():
     if v.stoneHitAnimControl != 1:
@@ -272,14 +322,12 @@ def falconHittingStone():
     screen.blit(bg, (posX * v.TILE_SIZE, posY * v.TILE_SIZE), pygame.Rect((posX * v.TILE_SIZE, posY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
     screen.blit(tileset, (v.falconX * v.TILE_SIZE,v.falconY * v.TILE_SIZE),(v.stoneHitAnimFrame * 64,v.falconFace + 128,64,64))   
 
-
-
 def levelScore():
     if (v.levelScoreControl == v.LEVEL_SCORE_OFF):
         return
     if (v.coal == 1 and v.levelScoreControl == v.LEVEL_SCORE_COUNT):
         v.levelScoreControl = v.LEVEL_SCORE_PORTAL_OPEN
-        v.falconIdleControl = False
+        v.falconIdleControl = 0
     if (v.amigaMode == v.AMIGA_MODE_OFF and v.levelScoreTick == v.levelScoreTempo and v.levelScoreControl == v.LEVEL_SCORE_COUNT):
         v.levelScoreTick = 0
         v.coal -= 1
@@ -344,7 +392,7 @@ def levelScore():
     if (v.levelScoreControl == v.LEVEL_SCORE_END):
         v.levelScoreControl = v.LEVEL_SCORE_OFF
         endLevelFadeOut()
-        v.falconIdleControl = True
+        v.falconIdleControl = 1
         v.portalAnimTick = 0
         v.level += 1
         if (v.level == v.LAST_LEVEL_NUMBER + 1):
@@ -378,7 +426,7 @@ def gameOverCheck():
         v.level = 1
         v.robboMsgCount = 0
         v.falconX = 0
-        v.falconPreviousPositionY = 0
+        v.previousY = 0
         exec(open("gameover.py").read())
 
 def robboScrollUp():
@@ -408,7 +456,8 @@ def robboSays():
         v.robboMsgNr +=1 
         robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr] 
         v.robboMsgCtrl = v.SCROLL_DOWN
-        v.hudScrollingTick = 0 
+        #v.hudScrollingControl = v.ON
+        #v.hudScrollingTick = 0 
 
 def robboScrollDown():
     if v.robboMsgCtrl != v.SCROLL_DOWN:
@@ -421,11 +470,11 @@ def robboScrollDown():
     if v.hudScrollingTick >= 64:     
         v.robboMsgCtrl = v.SCROLL_OFF
         v.hudScrollingTick = 0
-        v.hudScrollingControl = 0
+        v.hudScrollingControl = v.OFF
         displayOnHUD()
     
 def falconWholeFrameMoveBlit():
-    screen.blit(bg, (v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), pygame.Rect((v.falconPreviousPositionX * v.TILE_SIZE, v.falconPreviousPositionY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+    screen.blit(bg, (v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), pygame.Rect((v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
     screen.blit(tileset, (v.falconX * v.TILE_SIZE,v.falconY * v.TILE_SIZE),(0,128,64,64))   
     #pygame.display.flip()
     
@@ -434,13 +483,13 @@ def falconCollisionCheck():
         v.stoneHitAnimControl = 1
         v.falconIdleControl = 0
     
-    if v.kierunek == 1:
+    if v.kierunekHold == 1:
         v.krawedzX -= 1
-    if v.kierunek == 2:
+    if v.kierunekHold == 2:
         v.krawedzX += 1
-    if v.kierunek == 3:
+    if v.kierunekHold == 3:
         v.krawedzY += 1
-    if v.kierunek == 4:
+    if v.kierunekHold == 4:
         v.krawedzY -= 1
 
     v.stoneHit = 0
@@ -454,26 +503,73 @@ def falconCollisionCheck():
     v.flyingAnimControl = 1 
 
 
-    if v.falconX == v.MAP_TILE_WIDTH + 1:    # RIGHT BORDER
-        v.falconX = v.MAP_TILE_WIDTH
-        v.frameHit = 1
-    elif v.falconX == -1:                   # LEFT BORDER
-        v.falconX = 0
-        v.frameHit = 1
-    elif v.falconY == v.MAP_TILE_HEIGHT + 1:  # DOWN BORDER
-        v.falconY = v.MAP_TILE_HEIGHT
-        v.frameHit = 1
-    elif v.falconY == -1:                      # UP BORDER
-        v.falconY = 0
-        v.frameHit = 1
+    #if v.falconX == v.MAP_TILE_WIDTH + 1:    # RIGHT BORDER
+    #    v.falconX = v.MAP_TILE_WIDTH
+    #    v.frameHit = 1
+    #elif v.falconX == -1:                   # LEFT BORDER
+    #    v.falconX = 0
+    #    v.frameHit = 1
+    #elif v.falconY == v.MAP_TILE_HEIGHT + 1:  # DOWN BORDER
+    #    v.falconY = v.MAP_TILE_HEIGHT
+    #    v.frameHit = 1
+    #elif v.falconY == -1:                      # UP BORDER
+    #    v.falconY = 0
+    #    v.frameHit = 1
+
+def czyRamka():
+    if v.kierunekHold == 1:
+        v.krawedzX = v.falconX + 1
+        if v.krawedzX == 10:
+            v.krawedzX = 9
+            v.falconX = 9
+            v.frameHit = 1
+    if v.kierunekHold == 2:
+        v.krawedzX = v.falconX - 1
+        if v.krawedzX == -1:
+            v.krawedzX = 0
+            v.falconX = 0
+            v.frameHit = 1
+    if v.kierunekHold == 3:
+        v.krawedzY = v.falconY - 1
+        if v.krawedzY == -1:
+            v.krawedzY = 0
+            v.falconY = 0
+            v.frameHit = 1
+    if v.kierunekHold == 4:
+        v.krawedzY = v.falconY + 1
+        if v.krawedzY == 7:
+            v.krawedzY = 6
+            v.falconY = 6
+            v.frameHit = 1
 
 def isThisStone():
-    for i in range(len(kamyki)):
-        for j in range(len(kamyki[i])): 
-            if kamyki[v.falconX][v.falconY] == 3:
-                v.falconX = v.falconPreviousPositionX
-                v.falconY = v.falconPreviousPositionY
-                v.stoneHit = 1
+    stoneX = 0
+    stoneY = 0
+
+    if v.kierunek == 1:
+        stoneX = v.falconX + 1
+        if kamyki[stoneX][v.falconY] == 3:
+            v.stoneHit = 1
+    if v.kierunek == 2:
+        stoneX = v.falconX - 1
+        if kamyki[stoneX][v.falconY] == 3:
+            v.stoneHit = 1
+    if v.kierunek == 3:
+        stoneX = v.falconY - 1
+        if kamyki[v.falconX][stoneY] == 3:
+            v.stoneHit = 1
+    if v.kierunek == 4:
+        stoneX = v.falconY + 1
+        if kamyki[v.falconX][stoneY] == 3:
+            v.stoneHit = 1
+
+
+    #for i in range(len(kamyki)):
+    #    for j in range(len(kamyki[i])): 
+    #        if kamyki[v.falconX][v.falconY] == 3:
+    #            v.falconX = v.previousX
+    #            v.falconY = v.previousY
+    #            v.stoneHit = 1
 
 def nextLevel():
     global bg
@@ -505,9 +601,7 @@ def nextLevel():
     #global kamyki
     #v.level += 1
     #kamyki = arrays.dict_levels[v.level]
-    
-                  
-        
+           
 def portalGlowAnim():
     screen.blit(bg, (v.portalGlowX*64,v.portalGlowY*64),(0,0,64,64)) 
     screen.blit(tileset, (v.portalGlowX*64,v.portalGlowY*64),(v.portalGlowFrame*64,11*64,64,64))     
@@ -539,9 +633,9 @@ def blueCapacitorsAnim():
         v.blueCapacitorAnimTileCheck = 0
 
 def falconIdleAnimation():
-    if (v.falconIdleControl == False):
+    if (v.falconIdleControl == 0):
         return
-    elif (v.kierunek != 0 and v.stoneHit == 0):
+    elif (v.kierunek != 0 and v.stoneHit == 1):
         return
     
     if (v.falconIdle == v.falconIdleTempo * 1):
@@ -565,7 +659,43 @@ def falconIdleAnimation():
     screen.blit(bg, (v.falconX*64,v.falconY*64),(0,0,64,64)) 
     screen.blit(tileset, (v.falconX*64,v.falconY*64),(v.idleFrame*64,v.falconFace+(6*64),64,64))
 
+def falconFlying():
+    if v.flyingAnimControl == 0:
+        return
+
+    if v.flyingAnimControl == 1:
+        v.falconIdleControl = 0
+        v.flyingAnimControl = 3
+        screen.blit(bg, (v.newPosX, v.newPosY),((v.newPosX, v.newPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+
+        if v.kierunekHold == 1:    
+            v.newPosX += 2
+        if v.kierunekHold == 2:    
+            v.newPosX -= 2
+        if v.kierunekHold == 3:    
+            v.newPosY -= 2
+        if v.kierunekHold == 4:    
+            v.newPosY += 2
+
+        if v.flyingTick == 4:
+            v.flyingFrame = 0
+
+        if (v.flyingTick == 8 or v.flyingTick == 12 or v.flyingTick == 16 or v.flyingTick == 20 or v.flyingTick == 24 or v.flyingTick == 28 or v.flyingTick == 32):
+            v.flyingFrame += 1
+
+        blitFlyingFrame()
+
+        if v.flyingTick >= 32:
+            v.flyingTick = 0
+            v.flyingAnimControl = 2
     
+    if v.flyingAnimControl == 2:
+        screen.blit(bg, (v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), pygame.Rect((v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+        endFalconFlying()
+        coalAndCollect()
+        v.flyingAnimControl = 0
+        v. falconIdleControl = 1
+
 
 
 
@@ -600,16 +730,51 @@ while run:
     if (v.blueCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
         v.blueCapacitorAnimTick = 0
 
+    if v.falconIdleControl == 1:
+        v.falconIdle += 1
+
+    if v.flyingAnimControl == 1:
+        v.flyingTick += 1
+
+    #if v.flyingAnimControl == 2:
+    #    falconFlying()
+    #    v.flyingAnimControl = 0
+    
+    falconHittingStone()
     redCapacitorsAnim()
     blueCapacitorsAnim()
 
-    falconIdleAnimation()
     robboScrollUp()
     robboSays()
     robboScrollDown()
 
+    if v.flyingAnimControl == 3:
+        v.flyingAnimControl = 4
+
+    falconFlying()
+    falconIdleAnimation()
+
+    if v.levelScoreControl != v.LEVEL_SCORE_OFF:
+        v.levelScoreTick += 1
+        levelScore()
+
+    if v.flyingAnimControl == 4:
+        v.flyingAnimControl = 1
+
     if v.hudScrollingControl == v.ON:
         v.hudScrollingTick += 4 # This is the tempo of robboHUD scrolling up and down
+
+    if v.stoneHitAnimControl == 1:
+        v.stoneHitAnimTick += 1
+
+    v.kierunek = 0
+
+    if (v.coal == 0 and v.levelScoreControl != v.LEVEL_SCORE_NOCOAL):
+        v.levelScoreControl = v.LEVEL_SCORE_NOCOAL
+
+    
+
+    
 
 
     if v.gameStartProc == True:
@@ -633,18 +798,47 @@ while run:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 v.kierunek = 1
+                v.falconFace = 0
             elif event.key == pygame.K_LEFT:
                 v.kierunek = 2
+                v.falconFace = 64
             elif event.key == pygame.K_UP:
                 v.kierunek = 3
             elif event.key == pygame.K_DOWN:
                 v.kierunek = 4 
             elif event.key == pygame.K_ESCAPE:
+                clearTiles()
+                clean()
                 exec(open("menu.py").read()) 
-            falconWholeFrameMovePrep()
+            #falconWholeFrameMovePrep()
 
-    if (v.falconIdleControl == True):
-        v.falconIdle += 1
+    if v.kierunek != 0:
+        if v.robboMsgCtrl == v.SCROLL_DOWN:
+            v.hudScrollingControl = v.ON
+            v.hudScrollingTick = 0
+
+        if v.flyingAnimControl == 0:
+            v.kierunekHold = v.kierunek
+            isThisStone()
+            czyRamka()
+            falconCollisionCheck()
+
+    #if v.robboMsgCtrl == v.SCROLL_DISPLAY:
+    #    robboSays()
+
+    if v.youWin == 1:
+        v.youWin = 0
+        exec(open("score.py").read())
+    if v.youWin == 2:
+        v.youWin = 0
+        exec(open("gameover.py").read())
+    if v.youWin == 3:
+        v.youWin = 0
+        exec(open("leakedGameOver.py").read())
+
+            
+        
+
     
     fpsClock.tick(FPS)    # wait vbl
 

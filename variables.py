@@ -12,7 +12,7 @@ gameStartProc = True
 keyPressed = False
 
 # preparation & setup
-level = 16
+level = 5
 endLevelCheck = False
 youWin = 0
 HUDfontcolor = (0,153,153) 
@@ -47,9 +47,9 @@ stoneHitAnimFrame = 0
 oneFrameDirection = 0
 
 # ship idle
-falconIdle = 0
+falconIdle = 1
 falconIdleTempo = 4
-falconIdleControl = True
+falconIdleControl = 1
 idleFrame = 0
 
 
@@ -57,19 +57,27 @@ idleFrame = 0
 falconX = 0
 falconY = 0
 
-falconPreviousPositionX = 0
-falconPreviousPositionY = 0
+previousX = 0
+previousY = 0
 kierunek = 0
+kierunekHold = 0
+
 falconFace = 0
 
 krawedzX = 0
 krawedzY = 0
 uwPosX = 0
 uwPosY = 0
+
+newPosX = 0
+newPosY = 0
 tempX = 0
 tempY = 0
 
 flyingAnimControl = 0
+flyingTick = 0
+flyingFrame = 0
+
 
 # portal animation 
 portalGlowX = 0
@@ -82,7 +90,7 @@ portalAnimTick = 0
 # R U capacitors animation
 redCapacitorAnimTick = 0
 blueCapacitorAnimTick = 0
-CAPACITOR_TICK_TEMPO = 8
+CAPACITOR_TICK_TEMPO = 2
 redCapacitorAnimTileCheck = 0
 blueCapacitorAnimTileCheck = 0
 
