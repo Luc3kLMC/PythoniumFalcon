@@ -17,11 +17,18 @@ run = True
 font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 #font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
-tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
-tileset.set_colorkey((0,0,0))
+if v.thirdCheatEnabledWhenEqual3 != 3:
+    tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
+    tileset.set_colorkey((0,0,0))
+    HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+elif v.thirdCheatEnabledWhenEqual3 == 3:
+    tileset = pygame.image.load(os.path.join("data","tileset2.png")).convert()
+    tileset.set_colorkey((0,0,0))
+    HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+
 
 bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
-HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+
 robboHUD = pygame.image.load(os.path.join("data", "falkon_robbo.png")).convert()
 gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
 
@@ -809,11 +816,19 @@ while run:
                 v.kierunek = 3
             elif event.key == pygame.K_DOWN:
                 v.kierunek = 4 
+            elif event.key == pygame.K_n and v.firstCheatEnabledWhenEqual3 == 3:
+                v.level += 1
+                nextLevel()   # TBD COS SIE RYPIE
+                
+
             elif event.key == pygame.K_ESCAPE:
                 clearTiles()
                 clean()
                 exec(open("menu.py").read()) 
+            
             #falconWholeFrameMovePrep()
+
+        
 
     if v.kierunek != 0:
         if v.robboMsgCtrl == v.SCROLL_DOWN:
