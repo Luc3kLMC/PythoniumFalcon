@@ -5,6 +5,15 @@ TILE_SIZE = 64
 ANIM_FRAME_COUNT = 16
 LAST_LEVEL_NUMBER = 28
 
+### IMPORTANT 
+### RUN STATES FOR GENERAL STATE MACHINE:
+STATE_MENU = 1
+STATE_CREDITS = 2
+STATE_GAME = 3
+STATE_INTRO = 4
+generalState = STATE_MENU
+menuBlit = 0
+
 ON = 1   # general purpose
 OFF = 0
 
@@ -117,3 +126,19 @@ LEVEL_SCORE_NOCOAL = 6
 firstCheatEnabledWhenEqual3 = 0
 secondCheatEnabledWhenEqual3 = 0
 thirdCheatEnabledWhenEqual3 = 0
+
+# credits kinda enum style 
+STATE_LMC_FADE_IN = 1
+STATE_LMC_FADE_OUT = 2
+STATE_ACE_FADE_IN = 3
+STATE_ACE_FADE_OUT = 4
+STATE_CREDITS_TEXT= 5
+
+fadeTick = 0
+stateActual = STATE_LMC_FADE_IN  # controling the phase we're already in
+creditsDisplayed = 0
+creditsPosition = 0
+
+# intro variables
+introPosition = 0
+introPageControl = 0

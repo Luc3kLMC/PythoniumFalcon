@@ -1,4 +1,4 @@
- page1 = [
+page1 = [
     "Captain Tramiel, our planet was attacked by",
     "treacherous Great Miner and his race of",
     "Amigans. Almost all coal supplies for our",

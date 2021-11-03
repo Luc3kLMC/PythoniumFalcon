@@ -13,7 +13,7 @@ stoneTileRandom = random.randint(1, 3)
 
 screen = pygame.display.set_mode((640,512))
 pygame.display.set_caption("PythoniumFalcon")
-run = True
+run = v.RUN_GAME
 font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 #font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
@@ -720,7 +720,7 @@ drawTiles()
 pygame.display.flip()
 
 ##### MAIN LOOP
-while run:
+while run == v.RUN_GAME:
     pygame.display.flip()
 
     # handling with idle animations:
