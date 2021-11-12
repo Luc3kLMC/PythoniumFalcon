@@ -3,6 +3,7 @@ import arraysLevels as arrays
 import robboTxt
 from pygame.event import clear
 
+
 import variables as v  
  
 
@@ -38,7 +39,8 @@ excessCoalDisplay = font.render(str(v.excessCoal), True, (0,153,153)) # ... amou
 capacitorsDisplay = font.render(str(v.capacitors), True, (0,153,153)) # ... capacitors for endgame score
 robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153)) # same for Robbo's
 
-kamyki = arrays.dict_levels[v.level]
+kamyki = list(map(list, arrays.dict_levels[v.level]))
+#kamyki = arrays.dict_levels[v.level]
 robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
 
 
@@ -70,7 +72,30 @@ idleFrame = 0  # variable controlling the idle animation time
 #### FUNCTIONS
 
 def clean():
-    #TBD
+    v.falconX = 0
+    v.falconY = 0
+    v.krawedzX = 0
+    v.krawedzY = 0
+    v.kierunek = 0
+    v.falconFace = 0
+    v.uwPosX = 0
+    v.uwPosY = 0
+    v.stoneHit = 0
+    v.frameHit = 0
+    v.coal = v.startingCoal
+    v.capacitors = 0
+    v.level = 1
+    v.robboMsgNr = 0
+    v.robboMsgCount = 0
+    v.robboMsgCtrl = 0
+    v.excessCoal = 0
+    #HUDFontColor?
+    v.amigaMode = v.AMIGA_MODE_OFF
+    v.flyingAnimControl = 0
+    #musicPlay
+    v.firstCheatEnabledWhenEqual3 = 0
+    v.secondCheatEnabledWhenEqual3 = 0
+    v.thirdCheatEnabledWhenEqual3 = 0
     return
 
 def endLevelFadeOut():
@@ -158,10 +183,8 @@ def falconWholeFrameMovePrep():
         v.hudScrollingControl = v.ON   
     
 def clearTiles():
-    global kamyki
-    global bgWithTile
-    global bg 
-    bgWithTile = bg
+    global bg,bgWithTile 
+    bgWithTile.blit(bg, (0,0))
     for i in range(len(kamyki)):
         for j in range(len(kamyki[i])):
             kamyki[i][j] = 0
@@ -169,7 +192,8 @@ def clearTiles():
             
 def drawTiles():
     global kamyki
-    kamyki = arrays.dict_levels[v.level]
+    kamyki = list(map(list, arrays.dict_levels[v.level]))
+    #kamyki = arrays.dict_levels[v.level].copy
     for i in range(len(kamyki)):
         for j in range(len(kamyki[i])): 
             if kamyki[i][j] == 1:
@@ -623,6 +647,7 @@ def nextLevel():
         v.robboMsgNr = v.LAST_LEVEL_NUMBER
 
     clearTiles()
+    pygame.display.flip()
     screen.blit(bg, (0,0))
     displayOnHUD()
     drawTiles()
@@ -731,15 +756,10 @@ def falconFlying():
 
 
 
-##### disable mouse 
-pygame.event.set_blocked(pygame.MOUSEMOTION)
+
 
 ##### screen display after preparing everything
-screen.blit(bg, (0,0))
-displayOnHUD()
-
-drawTiles()
-pygame.display.flip()
+#pygame.display.flip()
 
 
 

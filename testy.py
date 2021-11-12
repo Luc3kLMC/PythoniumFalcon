@@ -4,6 +4,7 @@ from pygame.event import clear
 import arraysLevels as arrays
 import variables as v  
 import robboTxt 
+import d8
 
 pygame.init()
 FPS = 50
@@ -23,4 +24,17 @@ tileset.set_colorkey((0,0,0))
 bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
 bgWithTile = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() 
 
-time.sleep(2)
+screen.blit(bg,(0,0))
+v.level = 2
+d8.drawTiles()
+pygame.display.flip()
+time.sleep(1)
+
+screen.blit(bg,(0,0))
+d8.clearTiles()
+pygame.display.flip()
+time.sleep(1)
+v.level = 2
+d8.drawTiles()
+pygame.display.flip()
+time.sleep(1)

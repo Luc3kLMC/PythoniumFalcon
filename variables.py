@@ -21,7 +21,7 @@ gameStartProc = True
 keyPressed = False
 
 # preparation & setup
-level = 5
+level = 1
 endLevelCheck = False
 youWin = 0
 HUDfontcolor = (0,153,153) 

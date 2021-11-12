@@ -12,10 +12,13 @@ import robboTxt
 pygame.init()
 screen = pygame.display.set_mode((640,512))
 run = True
-FPS = 100
+FPS = 200
 fpsClock = pygame.time.Clock()
 
 MENU = pygame.image.load(os.path.join("data", "title.png")).convert()
+
+##### disable mouse 
+pygame.event.set_blocked(pygame.MOUSEMOTION)
 
 screen.blit(MENU, (0,0))
 pygame.display.flip()
@@ -32,6 +35,10 @@ while run == True:
         
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    d8.bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
+                    screen.blit(d8.bg, (0,0))
+                    d8.displayOnHUD()
+                    d8.drawTiles()
                     v.gameStartProc = True
                     v.generalState = v.STATE_GAME
                 elif event.key == pygame.K_c:
