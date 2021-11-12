@@ -4,6 +4,9 @@ from pygame import display
 import variables as v
 import credits
 import intro
+import d8
+import arraysLevels as arrays
+import robboTxt
 
 
 pygame.init()
@@ -30,7 +33,7 @@ while run == True:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     v.gameStartProc = True
-                    exec(open('d8.py').read())
+                    v.generalState = v.STATE_GAME
                 elif event.key == pygame.K_c:
                     v.generalState = v.STATE_CREDITS
                     v.fadeTick = 0
@@ -121,6 +124,141 @@ while run == True:
                 
                 elif event.key == pygame.K_ESCAPE:
                     run = False
+
+    if v.generalState == v.STATE_GAME:
+        pygame.display.flip()
+
+        # handling with idle animations:
+        v.portalGlowTick += 1
+        if (v.portalGlowTick > v.PORTAL_TICK_TEMPO):
+            v.portalGlowFrame += 1
+            d8.portalGlowAnim()
+            v.portalGlowTick = 0
+            if (v.portalGlowFrame == 7):
+                v.portalGlowFrame = 0
+        
+        v.redCapacitorAnimTick += 1
+        if (v.redCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
+            v.redCapacitorAnimTick = 0
+        
+        v.blueCapacitorAnimTick += 1
+        if (v.blueCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
+            v.blueCapacitorAnimTick = 0
+
+        if v.falconIdleControl == 1:
+            v.falconIdle += 1
+
+        if v.flyingAnimControl == 1:
+            v.flyingTick += 1
+
+        #if v.flyingAnimControl == 2:
+        #    falconFlying()
+        #    v.flyingAnimControl = 0
+        
+        d8.falconHittingStone()
+        d8.redCapacitorsAnim()
+        d8.blueCapacitorsAnim()
+
+        d8.robboScrollUp()
+        d8.robboSays()
+        d8.robboScrollDown()
+
+        if v.flyingAnimControl == 3:
+            v.flyingAnimControl = 4
+
+        d8.falconFlying()
+        d8.falconIdleAnimation()
+
+        if v.levelScoreControl != v.LEVEL_SCORE_OFF:
+            v.levelScoreTick += 1
+            d8.levelScore()
+
+        if v.flyingAnimControl == 4:
+            v.flyingAnimControl = 1
+
+        if v.hudScrollingControl == v.ON:
+            v.hudScrollingTick += 4 # This is the tempo of robboHUD scrolling up and down
+
+        if v.stoneHitAnimControl == 1:
+            v.stoneHitAnimTick += 1
+
+        v.kierunek = 0
+
+        if (v.coal == 0 and v.levelScoreControl != v.LEVEL_SCORE_NOCOAL):
+            v.levelScoreControl = v.LEVEL_SCORE_NOCOAL
+
+        
+
+        
+
+
+        if v.gameStartProc == True:
+            screen.blit(d8.bg, (0,0))
+            d8.displayOnHUD()
+            d8.kamyki = arrays.dict_levels[1]
+            d8.drawTiles()
+            v.gameStartProc = False
+
+        
+        
+
+        if v.endLevelCheck == True:
+            v.endLevelCheck = False
+            d8.nextLevel()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    v.kierunek = 1
+                    v.falconFace = 0
+                elif event.key == pygame.K_LEFT:
+                    v.kierunek = 2
+                    v.falconFace = 64
+                elif event.key == pygame.K_UP:
+                    v.kierunek = 3
+                elif event.key == pygame.K_DOWN:
+                    v.kierunek = 4 
+                elif event.key == pygame.K_n and v.firstCheatEnabledWhenEqual3 == 3:
+                    v.level += 1
+                    d8.nextLevel()   
+                    
+
+                elif event.key == pygame.K_ESCAPE:
+                    d8.clearTiles()
+                    d8.clean()
+                    v.generalState = v.STATE_MENU
+                    v.menuBlit = 1
+                
+                #falconWholeFrameMovePrep()
+
+            
+
+        if v.kierunek != 0:
+            if v.robboMsgCtrl == v.SCROLL_DOWN:
+                v.hudScrollingControl = v.ON
+                v.hudScrollingTick = 0
+
+            if v.flyingAnimControl == 0:
+                v.kierunekHold = v.kierunek
+                d8.isThisStone()
+                d8.czyRamka()
+                d8.falconCollisionCheck()
+
+        #if v.robboMsgCtrl == v.SCROLL_DISPLAY:
+        #    robboSays()
+
+        if v.youWin == 1:
+            v.youWin = 0
+            exec(open("score.py").read())
+        if v.youWin == 2:
+            v.youWin = 0
+            exec(open("gameover.py").read())
+        if v.youWin == 3:
+            v.youWin = 0
+            exec(open("leakedGameOver.py").read())
 
         
     fpsClock.tick(FPS)

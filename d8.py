@@ -1,19 +1,18 @@
 import pygame, sys, os, random, time
-
-from pygame.event import clear
 import arraysLevels as arrays
+import robboTxt
+from pygame.event import clear
+
 import variables as v  
-import robboTxt 
+ 
 
 pygame.init()
-FPS = 50
-fpsClock = pygame.time.Clock()  # needed for 'wait vbl'
 random.seed(567) # stone-tile randomizer seed
 stoneTileRandom = random.randint(1, 3)
 
 screen = pygame.display.set_mode((640,512))
 pygame.display.set_caption("PythoniumFalcon")
-run = v.RUN_GAME
+run = True
 font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 #font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
@@ -24,10 +23,12 @@ if v.thirdCheatEnabledWhenEqual3 != 3:
 elif v.thirdCheatEnabledWhenEqual3 == 3:
     tileset = pygame.image.load(os.path.join("data","tileset2.png")).convert()
     tileset.set_colorkey((0,0,0))
-    HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
+    HUD = pygame.image.load(os.path.join("data", "HUD2.png")).convert() # HUD image
 
 
 bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
+bgWithTile = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
+#bgWithTile.set_colorkey((0,0,0))
 
 robboHUD = pygame.image.load(os.path.join("data", "falkon_robbo.png")).convert()
 gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
@@ -96,7 +97,7 @@ def prepareFalconFlying():
         v.uwPosY = v.tempY * 64
 
 def endFalconFlying():
-    #screen.blit(bg, (v.newPosX * v.TILE_SIZE, v.newPosY * v.TILE_SIZE), pygame.Rect((v.newPosX * v.TILE_SIZE, v.newPosY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
+    bgWithTile.blit(bg, (v.newPosX* v.TILE_SIZE,v.newPosY* v.TILE_SIZE),(v.newPosX* v.TILE_SIZE,v.newPosY* v.TILE_SIZE,64,64))
     if v.kierunekHold == 1:
         v.falconX = v.falconX + 1
     if v.kierunekHold == 2:
@@ -108,19 +109,23 @@ def endFalconFlying():
 
 def blitFlyingFrame():
     screen.blit(bg, (v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), pygame.Rect((v.previousX * v.TILE_SIZE, v.previousY * v.TILE_SIZE), (v.TILE_SIZE,v.TILE_SIZE)))
-    prevPosX = v.uwPosX
-    prevPosY = v.uwPosY
-    if v.kierunekHold == 1:
-        prevPosX -= 2
-    if v.kierunekHold == 2:
-        prevPosX += 2
-    if v.kierunekHold == 3:
-        prevPosY += 2
-    if v.kierunekHold == 4:
-        prevPosY -= 2
+    if (kamyki[v.tempX][v.tempY] > 3 and kamyki[v.tempX][v.tempY] != 10):
+        screen.blit(bgWithTile, (v.newPosX* v.TILE_SIZE,v.newPosY* v.TILE_SIZE),(v.newPosX* v.TILE_SIZE,v.newPosY* v.TILE_SIZE,64,64))
     
-    screen.blit(bg, (prevPosX, prevPosY), ((prevPosX, prevPosY), (v.TILE_SIZE,v.TILE_SIZE)))
-    screen.blit(bg, (v.newPosX, v.newPosY),((v.newPosX, v.newPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+    elif (kamyki[v.tempX][v.tempY] < 4):
+        prevPosX = v.uwPosX
+        prevPosY = v.uwPosY
+        if v.kierunekHold == 1:
+            prevPosX -= 2
+        if v.kierunekHold == 2:
+            prevPosX += 2
+        if v.kierunekHold == 3:
+            prevPosY += 2
+        if v.kierunekHold == 4:
+            prevPosY -= 2
+        screen.blit(bg, (prevPosX, prevPosY), ((prevPosX, prevPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+        screen.blit(bg, (v.newPosX, v.newPosY),((v.newPosX, v.newPosY), (v.TILE_SIZE,v.TILE_SIZE)))
+
     screen.blit(tileset, (v.newPosX, v.newPosY),(v.flyingFrame*64,v.falconFace+(2*64),64,64))
 
 def falconWholeFrameMovePrep():
@@ -154,6 +159,9 @@ def falconWholeFrameMovePrep():
     
 def clearTiles():
     global kamyki
+    global bgWithTile
+    global bg 
+    bgWithTile = bg
     for i in range(len(kamyki)):
         for j in range(len(kamyki[i])):
             kamyki[i][j] = 0
@@ -180,26 +188,35 @@ def drawTiles():
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(stoneTileRandom * 64,0,64,64))
             if kamyki[i][j] == 4:
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(3 * 64,0,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(3 * 64,0,64,64))
             if kamyki[i][j] == 5:
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(4*64,0,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(4*64,0,64,64))
             if kamyki[i][j] == 6:                
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(5*64,0,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(5*64,0,64,64))
             if kamyki[i][j] == 7:               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(6*64,0,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(6*64,0,64,64))
             if kamyki[i][j] == 8:
                 v.collectiblesAnim[i][j] = 8               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(0,64,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(0,64,64,64))
             if kamyki[i][j] == 9: 
                 v.collectiblesAnim[i][j] = 9               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(64,64,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(64,64,64,64))
             if kamyki[i][j] == 10:
                 v.portalGlowX = i
                 v.portalGlowY = j               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(128,64,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(128,64,64,64))
             if kamyki[i][j] == 11:               
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(192,64,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(192,64,64,64))
             if kamyki[i][j] == 12:
                 screen.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(256,64,64,64))
+                bgWithTile.blit(tileset, (i * v.TILE_SIZE, j * v.TILE_SIZE),(256,64,64,64))
     
 def displayOnHUD():
     if v.robboMsgCtrl != v.SCROLL_OFF:
@@ -265,7 +282,6 @@ def coalAndCollect():
                 # AMIGA MODE TBD
     displayOnHUD()
     
-
 def falconHittingStone():
     if v.stoneHitAnimControl != 1:
         return
@@ -582,19 +598,24 @@ def isThisStone():
     #            v.stoneHit = 1
 
 def nextLevel():
-    global bg
+    global bg, bgWithTile
     v.coal = 1
 
     if v.level == 4:
         bg = pygame.image.load(os.path.join("data\\background", "bg2.png")).convert()
+        bgWithTile = pygame.image.load(os.path.join("data\\background", "bg2.png")).convert()
     if v.level == 8:
         bg = pygame.image.load(os.path.join("data\\background", "bg3.png")).convert()
+        bgWithTile = pygame.image.load(os.path.join("data\\background", "bg3.png")).convert()
     if v.level == 12:
         bg = pygame.image.load(os.path.join("data\\background", "bg4.png")).convert()
+        bgWithTile = pygame.image.load(os.path.join("data\\background", "bg4.png")).convert()
     if v.level == 17:
         bg = pygame.image.load(os.path.join("data\\background", "bg5.png")).convert()
+        bgWithTile = pygame.image.load(os.path.join("data\\background", "bg5.png")).convert()
     if v.level == 22:
         bg = pygame.image.load(os.path.join("data\\background", "bg6.png")).convert()
+        bgWithTile = pygame.image.load(os.path.join("data\\background", "bg6.png")).convert()
     
     if v.level == v.LAST_LEVEL_NUMBER - 1:
         v.robboMsgNr = v.LAST_LEVEL_NUMBER - 1
@@ -666,7 +687,8 @@ def falconIdleAnimation():
         v.idleFrame = 7
         v.falconIdle = 0
 
-    screen.blit(bg, (v.falconX*64,v.falconY*64),(0,0,64,64)) 
+    #bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
+    screen.blit(bg, (v.falconX*64,v.falconY*64),(v.falconX*64,v.falconY*64,64,64)) 
     screen.blit(tileset, (v.falconX*64,v.falconY*64),(v.idleFrame*64,v.falconFace+(6*64),64,64))
 
 def falconFlying():
@@ -719,146 +741,7 @@ displayOnHUD()
 drawTiles()
 pygame.display.flip()
 
-##### MAIN LOOP
-while run == v.RUN_GAME:
-    pygame.display.flip()
 
-    # handling with idle animations:
-    v.portalGlowTick += 1
-    if (v.portalGlowTick > v.PORTAL_TICK_TEMPO):
-        v.portalGlowFrame += 1
-        portalGlowAnim()
-        v.portalGlowTick = 0
-        if (v.portalGlowFrame == 7):
-            v.portalGlowFrame = 0
-    
-    v.redCapacitorAnimTick += 1
-    if (v.redCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
-        v.redCapacitorAnimTick = 0
-    
-    v.blueCapacitorAnimTick += 1
-    if (v.blueCapacitorAnimTick > v.CAPACITOR_TICK_TEMPO):
-        v.blueCapacitorAnimTick = 0
-
-    if v.falconIdleControl == 1:
-        v.falconIdle += 1
-
-    if v.flyingAnimControl == 1:
-        v.flyingTick += 1
-
-    #if v.flyingAnimControl == 2:
-    #    falconFlying()
-    #    v.flyingAnimControl = 0
-    
-    falconHittingStone()
-    redCapacitorsAnim()
-    blueCapacitorsAnim()
-
-    robboScrollUp()
-    robboSays()
-    robboScrollDown()
-
-    if v.flyingAnimControl == 3:
-        v.flyingAnimControl = 4
-
-    falconFlying()
-    falconIdleAnimation()
-
-    if v.levelScoreControl != v.LEVEL_SCORE_OFF:
-        v.levelScoreTick += 1
-        levelScore()
-
-    if v.flyingAnimControl == 4:
-        v.flyingAnimControl = 1
-
-    if v.hudScrollingControl == v.ON:
-        v.hudScrollingTick += 4 # This is the tempo of robboHUD scrolling up and down
-
-    if v.stoneHitAnimControl == 1:
-        v.stoneHitAnimTick += 1
-
-    v.kierunek = 0
-
-    if (v.coal == 0 and v.levelScoreControl != v.LEVEL_SCORE_NOCOAL):
-        v.levelScoreControl = v.LEVEL_SCORE_NOCOAL
-
-    
-
-    
-
-
-    if v.gameStartProc == True:
-        screen.blit(bg, (0,0))
-        displayOnHUD()
-        kamyki = arrays.dict_levels[1]
-        drawTiles()
-        v.gameStartProc = False
-
-    
-    
-
-    if v.endLevelCheck == True:
-        v.endLevelCheck = False
-        nextLevel()
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                v.kierunek = 1
-                v.falconFace = 0
-            elif event.key == pygame.K_LEFT:
-                v.kierunek = 2
-                v.falconFace = 64
-            elif event.key == pygame.K_UP:
-                v.kierunek = 3
-            elif event.key == pygame.K_DOWN:
-                v.kierunek = 4 
-            elif event.key == pygame.K_n and v.firstCheatEnabledWhenEqual3 == 3:
-                v.level += 1
-                nextLevel()   # TBD COS SIE RYPIE
-                
-
-            elif event.key == pygame.K_ESCAPE:
-                clearTiles()
-                clean()
-                exec(open("menu.py").read()) 
-            
-            #falconWholeFrameMovePrep()
-
-        
-
-    if v.kierunek != 0:
-        if v.robboMsgCtrl == v.SCROLL_DOWN:
-            v.hudScrollingControl = v.ON
-            v.hudScrollingTick = 0
-
-        if v.flyingAnimControl == 0:
-            v.kierunekHold = v.kierunek
-            isThisStone()
-            czyRamka()
-            falconCollisionCheck()
-
-    #if v.robboMsgCtrl == v.SCROLL_DISPLAY:
-    #    robboSays()
-
-    if v.youWin == 1:
-        v.youWin = 0
-        exec(open("score.py").read())
-    if v.youWin == 2:
-        v.youWin = 0
-        exec(open("gameover.py").read())
-    if v.youWin == 3:
-        v.youWin = 0
-        exec(open("leakedGameOver.py").read())
-
-            
-        
-
-    
-    fpsClock.tick(FPS)    # wait vbl
 
 
 

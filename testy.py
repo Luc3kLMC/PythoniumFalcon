@@ -21,12 +21,6 @@ tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
 tileset.set_colorkey((0,0,0))
 
 bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
-
-
-
-#screen.blit(bg, (0,0))
-bg.blit(tileset, (0, 0),(0,(2*64),64,64))
-screen.blit(bg, (0,0))
-pygame.display.flip()
+bgWithTile = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() 
 
 time.sleep(2)
