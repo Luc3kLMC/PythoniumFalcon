@@ -1,3 +1,4 @@
+import robboTxt
 
 MAP_TILE_HEIGHT = 6
 MAP_TILE_WIDTH = 9
@@ -11,8 +12,13 @@ STATE_MENU = 1
 STATE_CREDITS = 2
 STATE_GAME = 3
 STATE_INTRO = 4
+STATE_SCORE = 5
+STATE_GAMEOVER = 6
+STATE_LEAKED_GAME_OVER = 7
 generalState = STATE_MENU
 menuBlit = 0
+scoreBlit = 0
+gameoverBlit = 0
 
 ON = 1   # general purpose
 OFF = 0
@@ -31,7 +37,7 @@ excessCoal = 0
 capacitors = 0
 robboMsgCount = 0
 
-robboMsgNr = 1
+robboMsgNr = 0
 
 # array initialization for capacitors animation
 w, h = 7, 10
@@ -46,6 +52,7 @@ SCROLL_DISPLAY = 3
 hudScrollingControl = 0
 hudScrollingTick = 0
 robboMsgCtrl = SCROLL_OFF
+robboMessages = robboTxt.dict_robboTxt[robboMsgNr]
 
 # hitting stone & frame handling 
 stoneHit = 0

@@ -6,22 +6,56 @@ import credits
 import intro
 import d8
 import arraysLevels as arrays
-import robboTxt
+
+import scoreMessage as txt
 
 
 pygame.init()
 screen = pygame.display.set_mode((640,512))
 run = True
-FPS = 200
+FPS = 60
 fpsClock = pygame.time.Clock()
 
 MENU = pygame.image.load(os.path.join("data", "title.png")).convert()
+GAMEOVER = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
+VAMPIRE = pygame.image.load(os.path.join("data", "vampire.png")).convert()
+position = 0
+vampireScreen = False
+
 
 ##### disable mouse 
 pygame.event.set_blocked(pygame.MOUSEMOTION)
 
+def scorePrint():
+    global position
+    screen.fill((0, 85,85))
+    if (v.amigaMode == 0):
+        printing = txt.atari
+    elif (v.amigaMode == 2):
+        printing = txt.amiga
+
+    for i in printing:
+        blitTxt = d8.font.render(str(i), True, (0,153,153))
+        screen.blit(blitTxt, (0,position))
+        pygame.display.flip()
+        position += 16
+        time.sleep(0.01)
+    position = 0
+
+def leakedGameOverPrint():
+    global position
+    screen.fill((0, 85,85))  # screen bg color
+    for i in txt.leakedTxt:      # simple loop to print message
+        blitTxt = d8.font.render(str(i), True, (0,153,153))
+        screen.blit(blitTxt, (0,position))
+        pygame.display.flip()
+        position += 16
+        time.sleep(0.1)
+
+
 screen.blit(MENU, (0,0))
 pygame.display.flip()
+
 
 while run == True:
     if v.generalState == v.STATE_MENU:
@@ -35,6 +69,7 @@ while run == True:
         
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    d8.tilesetAndHUDcheck()
                     d8.bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
                     screen.blit(d8.bg, (0,0))
                     d8.displayOnHUD()
@@ -45,8 +80,6 @@ while run == True:
                     v.generalState = v.STATE_CREDITS
                     v.fadeTick = 0
                     v.stateActual = v.STATE_LMC_FADE_IN
-                    #credits.Run()
-                    #exec(open('credits.py').read())
                 elif event.key == pygame.K_i:
                     v.generalState = v.STATE_INTRO
                 elif event.key == pygame.K_ESCAPE:
@@ -124,7 +157,6 @@ while run == True:
                     v.introPosition = 0
                     v.generalState = v.STATE_MENU
                     v.menuBlit = 1
-                    #execfile('menu.py')
 
                 elif event.key == pygame.K_RETURN and v.introPageControl == 1:
                     v.introPageControl += 1
@@ -258,14 +290,81 @@ while run == True:
         #    robboSays()
 
         if v.youWin == 1:
+            v.generalState = v.STATE_SCORE
+            v.scoreBlit = 1
             v.youWin = 0
-            exec(open("score.py").read())
         if v.youWin == 2:
             v.youWin = 0
-            exec(open("gameover.py").read())
+            v.gameoverBlit = 1
+            v.generalState = v.STATE_GAMEOVER
         if v.youWin == 3:
             v.youWin = 0
-            exec(open("leakedGameOver.py").read())
+            v.gameoverBlit = 1
+            v.generalState = v.STATE_LEAKED_GAME_OVER
+
+    if v.generalState == v.STATE_SCORE:
+        if v.scoreBlit == 1:
+            scorePrint()
+            pygame.display.flip()
+            v.scoreBlit = 0
+        
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and vampireScreen == True:
+                    d8.clean()
+                    d8.clearTiles()
+                    v.generalState = v.STATE_MENU
+                    v.menuBlit = 1
+                elif event.key == pygame.K_RETURN and vampireScreen == False:
+                    vampireScreen = True
+                    screen.blit(VAMPIRE, (0,0))
+                    pygame.display.flip()
+                    time.sleep(1)
+                elif event.key == pygame.K_ESCAPE:
+                    run = False
+                
+    if v.generalState == v.STATE_GAMEOVER:
+        if v.gameoverBlit == 1:
+            screen.blit(GAMEOVER, (0,0))
+            pygame.display.flip()
+            v.gameoverBlit = 0
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                d8.clean()
+                d8.clearTiles()
+                v.generalState = v.STATE_MENU
+                v.menuBlit = 1
+            elif event.key == pygame.K_ESCAPE:
+                run = False
+
+    if v.generalState == v.STATE_LEAKED_GAME_OVER:
+        if v.gameoverBlit == 1:
+            leakedGameOverPrint()
+            v.gameoverBlit = 0
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                d8.clean()
+                d8.clearTiles()
+                v.generalState = v.STATE_MENU
+                v.menuBlit = 1
+            elif event.key == pygame.K_ESCAPE:
+                run = False
+
+
 
         
     fpsClock.tick(FPS)

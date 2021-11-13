@@ -47,3 +47,15 @@ amiga = [
     "",
     "(Fire or Return to continue)", 
 ]
+
+leakedTxt = [ "if (leaked capacitor == 2){", # message to print, too short to push into
+    "amigaModeDestroy(); ", # seperate file, i think
+    "}",
+    "// WTF",
+    "NO AMIGA SPIRIT FROM YOU I SMELL.",
+    "LEAKED CAPACITOR NO GOOD IMPROVEMENT IS.",
+    "SPACESHIP WICHER OF OURS YOU DESTROYED.",
+    "MAY THE WEAKNESS OF ATARI BE WITH YOU.",
+    "CHEATER. EAT COAL.",
+    "(Fire or Return to continue)",
+]

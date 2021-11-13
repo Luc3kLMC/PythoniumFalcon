@@ -38,3 +38,9 @@ v.level = 2
 d8.drawTiles()
 pygame.display.flip()
 time.sleep(1)
+
+a = 'dupa'
+b = a
+b = a + a
+print(a)
+print(b)

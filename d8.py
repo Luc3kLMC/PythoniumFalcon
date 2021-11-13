@@ -17,19 +17,19 @@ run = True
 font = pygame.font.Font("data\\Topaz-8.ttf", 16)
 #font = pygame.font.Font(os.path.join("data", "Topaz-8.ttf"), 16)
 
-if v.thirdCheatEnabledWhenEqual3 != 3:
-    tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
-    tileset.set_colorkey((0,0,0))
-    HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
-elif v.thirdCheatEnabledWhenEqual3 == 3:
-    tileset = pygame.image.load(os.path.join("data","tileset2.png")).convert()
-    tileset.set_colorkey((0,0,0))
-    HUD = pygame.image.load(os.path.join("data", "HUD2.png")).convert() # HUD image
-
+tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
+tileset.set_colorkey((0,0,0))
+HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert() # HUD image
 
 bg = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
+#bg.set_colorkey((0,0,0))
 bgWithTile = pygame.image.load(os.path.join("data\\background", "bg1.png")).convert() # background image nr 1
 #bgWithTile.set_colorkey((0,0,0))
+
+animBg = pygame.image.load(os.path.join("data\\background","bg1.png")).convert()
+animBg.set_colorkey((0,0,0))
+portalGlow = pygame.image.load(os.path.join("data\\background","bg1.png")).convert()
+portalGlow.set_colorkey((0,0,0))
 
 robboHUD = pygame.image.load(os.path.join("data", "falkon_robbo.png")).convert()
 gameOver = pygame.image.load(os.path.join("data", "gej_ower.png")).convert()
@@ -41,36 +41,23 @@ robboDisplay = font.render(str(v.robboMsgCount), True, (0,153,153)) # same for R
 
 kamyki = list(map(list, arrays.dict_levels[v.level]))
 #kamyki = arrays.dict_levels[v.level]
-robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
-
 
 idleFrame = 0  # variable controlling the idle animation time
-
-    # atarenium falcon idle graphics  UNUSED - BADLY HANDLED, FULL TILESET IMPLEMENTED !
-    # pointing right
-#falconR1 = pygame.image.load(os.path.join("data\\tilesFalcon", "falconR1.png"))
-#falconR1.set_colorkey((0,0,0))
-    # other gfx
-#coal2 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal2.png"))
-#coal2.set_colorkey((0,0,0))
-#coal3 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal3.png"))
-#coal3.set_colorkey((0,0,0))
-#coal4 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal4.png"))
-#coal4.set_colorkey((0,0,0))
-#coal5 = pygame.image.load(os.path.join("data\\tilesCoal", "Coal5.png"))
-#coal5.set_colorkey((0,0,0))
-#blueCapacitor = pygame.image.load(os.path.join("data", "BlueCapacitor0.png"))
-#blueCapacitor.set_colorkey((0,0,0))
-#redCapacitor = pygame.image.load(os.path.join("data", "RedCapacitor0.png"))
-#redCapacitor.set_colorkey((0,0,0))
-#portal = pygame.image.load(os.path.join("data", "AtariPortal.png"))
-#portal.set_colorkey((0,0,0))
-#robbo = pygame.image.load(os.path.join("data", "Robbo.png"))
-#robbo.set_colorkey((0,0,0))
 
 
 #### FUNCTIONS
 
+def tilesetAndHUDcheck():    
+    global tileset
+    if v.thirdCheatEnabledWhenEqual3 == 3:
+        tileset = pygame.image.load(os.path.join("data","tileset2.png")).convert()
+        tileset.set_colorkey((0,0,0))
+        HUD = pygame.image.load(os.path.join("data", "HUD2.png")).convert() # HUD image
+    elif v.thirdCheatEnabledWhenEqual3 == 0:
+        tileset = pygame.image.load(os.path.join("data","tileset.png")).convert()
+        tileset.set_colorkey((0,0,0))
+        HUD = pygame.image.load(os.path.join("data", "HUD.png")).convert()
+    
 def clean():
     v.falconX = 0
     v.falconY = 0
@@ -85,6 +72,8 @@ def clean():
     v.coal = v.startingCoal
     v.capacitors = 0
     v.level = 1
+    global robboMessages
+    robboMessages = 1
     v.robboMsgNr = 0
     v.robboMsgCount = 0
     v.robboMsgCtrl = 0
@@ -293,6 +282,7 @@ def coalAndCollect():
     elif whatPicked == 11:
         v.robboMsgNr += 1
         v.robboMsgCount += 1
+        v.robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr]
         v.robboMsgCtrl = v.SCROLL_UP
         v.hudScrollingControl = v.ON
     elif whatPicked == 12:
@@ -475,7 +465,7 @@ def gameOverCheck():
         v.robboMsgCount = 0
         v.falconX = 0
         v.previousY = 0
-        exec(open("gameover.py").read())
+        v.stateActual = v.STATE_GAMEOVER
 
 def robboScrollUp():
     if v.robboMsgCtrl != v.SCROLL_UP:
@@ -496,13 +486,12 @@ def robboSays():
         return # temporary, TBD        
 
     elif v.amigaMode != v.AMIGA_MODE_CHECK:
-        global robboMessages 
+         
         robboPreMsgDisplay = font.render("ROBBO says:", True, (0,153,153)) 
-        robboMsgDisplay = font.render(str(robboMessages), True, (0,153,153)) 
+        robboMsgDisplay = font.render(str(v.robboMessages), True, (0,153,153)) 
         screen.blit(robboPreMsgDisplay, (16,460)) 
         screen.blit(robboMsgDisplay, (16,480)) 
-        v.robboMsgNr +=1 
-        robboMessages = robboTxt.dict_robboTxt[v.robboMsgNr] 
+        #v.robboMsgNr +=1  
         v.robboMsgCtrl = v.SCROLL_DOWN
         #v.hudScrollingControl = v.ON
         #v.hudScrollingTick = 0 
@@ -622,7 +611,7 @@ def isThisStone():
     #            v.stoneHit = 1
 
 def nextLevel():
-    global bg, bgWithTile
+    global bg, bgWithTile,animBg
     v.coal = 1
 
     if v.level == 4:
@@ -642,9 +631,9 @@ def nextLevel():
         bgWithTile = pygame.image.load(os.path.join("data\\background", "bg6.png")).convert()
     
     if v.level == v.LAST_LEVEL_NUMBER - 1:
-        v.robboMsgNr = v.LAST_LEVEL_NUMBER - 1
+        v.robboMsgNr = v.LAST_LEVEL_NUMBER - 2
     if v.level == v.LAST_LEVEL_NUMBER:
-        v.robboMsgNr = v.LAST_LEVEL_NUMBER
+        v.robboMsgNr = v.LAST_LEVEL_NUMBER - 1
 
     clearTiles()
     pygame.display.flip()
@@ -669,7 +658,8 @@ def redCapacitorsAnim():
         for i in range (10):
             for k in range (7):
                 if (v.collectiblesAnim[i][k] == 9):
-                    screen.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    animBg.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    screen.blit(animBg, (i * 64,k * 64),(0,0,64,64))
                     screen.blit(tileset, (i * 64,k * 64),(v.redCapacitorAnimTileCheck*64,9*64,64,64))
     v.redCapacitorAnimTileCheck += 1
     if (v.redCapacitorAnimTileCheck == 7):
@@ -682,7 +672,8 @@ def blueCapacitorsAnim():
         for i in range (10):
             for k in range (7):
                 if (v.collectiblesAnim[i][k] == 8):
-                    screen.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    animBg.blit(bg, (i * 64,k * 64),(0,0,64,64))
+                    screen.blit(animBg, (i * 64,k * 64),(0,0,64,64))
                     screen.blit(tileset, (i * 64,k * 64),(v.blueCapacitorAnimTileCheck*64,8*64,64,64))
     v.blueCapacitorAnimTileCheck += 1
     if (v.blueCapacitorAnimTileCheck == 7):
@@ -752,20 +743,3 @@ def falconFlying():
         coalAndCollect()
         v.flyingAnimControl = 0
         v. falconIdleControl = 1
-
-
-
-
-
-
-##### screen display after preparing everything
-#pygame.display.flip()
-
-
-
-
-
-
-
-    
-

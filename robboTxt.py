@@ -20,6 +20,7 @@ robboTxtPreLast = "We're close, I feel it in my DSP."
 robboTxtLast = "Well done! Now collect the coal and GTFO !!!"
 
 dict_robboTxt = {
+    0: "",
     1: robboTxt1,
     2: robboTxt2,
     3: robboTxt3,
