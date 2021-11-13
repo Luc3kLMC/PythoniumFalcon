@@ -16,4 +16,6 @@
     * portal and collect item animation (scanline & correct blitting)
     * ESP
 
+    Run with menu.py
+
 
